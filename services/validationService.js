@@ -51,10 +51,10 @@ const schemas = {
         properties: {
             locale: {
                 type: 'string',
-                format: 'locale'
+                pattern: "^[a-z][a-z]_[A-Z][A-Z]$"
             },
             templateId: {
-                type: 'int'
+                type: 'integer'
             },
             recepient: {
                 type: 'object',
@@ -63,7 +63,7 @@ const schemas = {
                 properties: {
                     'userId': {
                         type: 'string',
-                        format: 'UUID'
+                        pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
                     },
                     'email': {
                         type: 'string',

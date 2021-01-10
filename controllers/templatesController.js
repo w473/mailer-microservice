@@ -12,7 +12,7 @@ exports.getAllTemplates = (req, res, next) => {
         .then((templates, count) => {
             if (templates) {
                 return res.status(404).json(
-                    { message: 'Template', data: TemplateFormatter.formatAll(templates), count() }
+                    { message: 'Template', data: TemplateFormatter.formatAll(templates), count: count }
                 );
             } else {
                 return res.status(404).json({ message: 'Template has not been found' });
