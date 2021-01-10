@@ -5,11 +5,14 @@ const schemas = {
     definitions: {
         templateLocale: {
             type: 'object',
-            required: ['locale', 'contents'],
+            required: ['locale', 'contents', 'subject'],
             properties: {
                 locale: {
                     type: 'string',
                     pattern: "^[a-z][a-z]_[A-Z][A-Z]$"
+                },
+                subject: {
+                    type: 'string'
                 },
                 contents: {
                     type: 'string'

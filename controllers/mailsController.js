@@ -1,9 +1,10 @@
+const config = require('../config');
 const Mail = require('../models/mailModel');
-const { Template, TemplateLocale } = require('../models/templateModel');
+const { TemplateLocale } = require('../models/templateModel');
 const Handlebars = require("handlebars");
 const { NotFoundApiResponseError } = require('../utils/errors');
 const { formatOne, formatAll } = require('../formatters/mailLocaleFormatter');
-const fallbackLocale = 'en_US';
+const sendEmail = require('../services/emailService');
 
 exports.add = async (req, res, next) => {
     const locale = req.body.locale;
@@ -11,7 +12,7 @@ exports.add = async (req, res, next) => {
         .findAll({
             where: {
                 'templateId': req.templateId,
-                'locale': [locale, fallbackLocale]
+                'locale': [locale, config.other.fallbackLocale]
             }
         })
         .then(templateLocales => {
@@ -27,15 +28,19 @@ exports.add = async (req, res, next) => {
         })
         .then(templateLocale => {
             const template = Handlebars.compile(templateLocale.contents);
-            return template(req.body.variables);
+            return template(req.body.variables), templateLocale.subject;
         })
-        .then(contents => {
+        .then(contents, subject => {
             return Mail.create({
                 recepientUserId: req.body.recepient.userId,
                 recepientEmail: req.body.recepient.email,
                 recepientName: req.body.recepient.name,
+                subject: subject,
                 contents: contents
             });
+        })
+        .then(email => {
+            return sendEmail(email);
         })
         .then(() => res.status(204).send())
         .catch(err => next(err));

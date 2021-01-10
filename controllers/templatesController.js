@@ -1,4 +1,3 @@
-const { sequelize } = require('../models/mailModel');
 const { Template, TemplateLocale } = require('../models/templateModel');
 const TemplateFormatter = require('../formatters/templateFormatter');
 
@@ -41,7 +40,8 @@ exports.addTemplate = (req, res, next) => {
     const templateLocales = req.body.locales.map((el) => {
         return TemplateLocale.build({
             'locale': el.locale,
-            'contents': el.contents
+            'contents': el.contents,
+            'subject': el.subject
         })
     });
 
@@ -91,6 +91,7 @@ exports.updateTemplateLocale = (req, res, next) => {
         ).then((template) => {
             if (template) {
                 template.contents = req.body.contents;
+                template.subject = req.body.subject;
                 return template.save();
             } else {
                 return res.status(404).json({ message: 'Template has not been found' });

@@ -17,8 +17,6 @@ Template.init({
     }
 }, { sequelize, modelName: 'Templates' });
 
-
-
 class TemplateLocale extends Model { }
 TemplateLocale.init({
     id: {
@@ -31,6 +29,10 @@ TemplateLocale.init({
         type: DataTypes.CHAR(5),
         allowNull: false
     },
+    subject: {
+        type: DataTypes.TEXT,
+        allowNull: false
+    },
     contents: {
         type: DataTypes.TEXT,
         allowNull: false
@@ -41,14 +43,10 @@ TemplateLocale.init({
     indexes: [{ unique: true, fields: ['templateId', "locale"] }]
 });
 
-// Template.hasMany(TemplateLocale);
-
 TemplateLocale.belongsTo(Template, {
     foreignKey: "templateId",
     as: "template"
 });
-
-
 
 exports.Template = Template;
 exports.TemplateLocale = TemplateLocale;

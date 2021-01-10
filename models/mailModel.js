@@ -1,4 +1,4 @@
-const { Sequelize, Model, DataTypes, Deferrable } = require('sequelize');
+const { Sequelize, Model, DataTypes } = require('sequelize');
 
 const sequelize = require('../utils/database');
 const { TemplateLocale } = require('./templateModel');
@@ -21,6 +21,10 @@ Mail.init({
     },
     recepientName: {
         type: DataTypes.STRING(1024),
+        allowNull: false
+    },
+    subject: {
+        type: DataTypes.TEXT,
         allowNull: false
     },
     contents: {

@@ -1,8 +1,9 @@
+const config = require('../config');
 const jwksClient = require('jwks-rsa');
 const jwt = require('jsonwebtoken');
 const client = jwksClient({
-    strictSsl: false,
-    jwksUri: 'http://localhost:5000/.well-known/jwks.json'
+    strictSsl: config.auth.jwks.ssl,
+    jwksUri: config.auth.jwks.uri
 });
 
 function getKey(header, callback) {
@@ -19,13 +20,18 @@ exports.entry = (req, res, next) => {
         const token = req.header('Authorization').replace('Bearer ', '');
         if (token.length > 0) {
             try {
-                return jwt.verify(token, getKey, { algorithm: 'RS512' }, (err, token) => {
-                    if (err) {
-                        return next(err);
+                return jwt.verify(
+                    token,
+                    getKey,
+                    { algorithm: config.auth.jwt.algorithm },
+                    (err, token) => {
+                        if (err) {
+                            return next(err);
+                        }
+                        req.user = token;
+                        next();
                     }
-                    req.user = token;
-                    next();
-                });
+                );
             } catch (next) {
                 next(error);
             }
