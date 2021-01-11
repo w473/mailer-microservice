@@ -4,7 +4,7 @@
   "description": "Microservice for sendings emails",
   "main": "index.js",
   "scripts": {
-    "test": "mocha",
+    "test": "mocha ./tests",
     "start-dev": "nodemon index.js",
     "start": "node index.js"
   },
@@ -19,9 +19,10 @@
   },
   "homepage": "https://github.com/w473/mailing-microservice#readme",
   "dependencies": {
+    "ajv": "^7.0.3",
+    "ajv-formats": "^1.5.1",
     "bcryptjs": "^2.4.3",
     "express": "^4.17.1",
-    "express-json-validator-middleware": "^2.1.1",
     "handlebars": "^4.7.6",
     "jsonwebtoken": "^8.5.1",
     "jwks-rsa": "^1.12.1",
@@ -33,6 +34,7 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "mocha": "^8.2.1",
+    "node-mocks-http": "^1.9.0",
     "nodemon": "^2.0.6"
   }
 }

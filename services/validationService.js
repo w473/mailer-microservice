@@ -1,22 +1,22 @@
-const { Validator, ValidationError } = require('express-json-validator-middleware');
-const validator = new Validator({ allErrors: true });
+const Ajv = require("ajv").default
+const addFormats = require("ajv-formats");
 
 const schemas = {
-    definitions: {
-        templateLocale: {
-            type: 'object',
-            required: ['locale', 'contents', 'subject'],
-            properties: {
-                locale: {
-                    type: 'string',
-                    pattern: "^[a-z][a-z]_[A-Z][A-Z]$"
-                },
-                subject: {
-                    type: 'string'
-                },
-                contents: {
-                    type: 'string'
-                }
+    templateLocale: {
+        type: 'object',
+        required: ['locale', 'contents', 'subject'],
+        properties: {
+            locale: {
+                type: 'string',
+                pattern: "^[a-z][a-z]_[A-Z][A-Z]$"
+            },
+            subject: {
+                type: 'string',
+                minLength: 5
+            },
+            contents: {
+                type: 'string',
+                minLength: 50
             }
         }
     },
@@ -26,11 +26,14 @@ const schemas = {
         additionalProperties: false,
         properties: {
             name: {
-                type: 'string'
+                type: 'string',
+                minLength: 5,
+                maxLength: 256
             },
             locales: {
+                minItems: 1,
                 type: 'array',
-                items: { "$ref": "#" }
+                items: { "$ref": "templateLocale" }
             }
         }
     },
@@ -40,11 +43,13 @@ const schemas = {
         additionalProperties: false,
         properties: {
             name: {
-                type: 'string'
+                type: 'string',
+                minLength: 5,
+                maxLength: 256
             }
         }
     },
-    mail: {
+    email: {
         type: 'object',
         required: ['recepient', 'variables', 'locale', 'templateId'],
         additionalProperties: false,
@@ -63,14 +68,16 @@ const schemas = {
                 properties: {
                     'userId': {
                         type: 'string',
-                        pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+                        format: 'uuid'
                     },
                     'email': {
                         type: 'string',
                         format: 'email'
                     },
                     'name': {
-                        type: 'string'
+                        type: 'string',
+                        minLength: 2,
+                        maxLength: 256
                     },
                 }
             },
@@ -82,6 +89,26 @@ const schemas = {
     }
 };
 
-exports.validate = (schemaName) => {
-    return validator.validate({ body: schemas[schemaName] });
+const ajv = new Ajv({ allErrors: true, schemas: schemas });
+addFormats(ajv)
+
+class ValidationError extends Error {
+    constructor(validationErrors) {
+        super();
+        this.name = "JsonSchemaValidationError";
+        this.validationErrors = validationErrors;
+    }
 }
+/**
+ * 
+ * @param {String} schemaName 
+ */
+module.exports = (schemaName) => {
+    return function (req, res, next) {
+        if (ajv.validate(schemaName, req.body)) {
+            return next();
+        }
+        return next(new ValidationError(ajv.errors));
+    }
+}
+

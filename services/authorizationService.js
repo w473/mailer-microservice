@@ -14,7 +14,7 @@ function getKey(header, callback) {
     });
 }
 
-exports.entry = (req, res, next) => {
+exports.jwtVerifyMiddleware = (req, res, next) => {
     const authorizationHeader = req.header('Authorization');
     if (authorizationHeader) {
         const token = req.header('Authorization').replace('Bearer ', '');
@@ -35,7 +35,6 @@ exports.entry = (req, res, next) => {
             } catch (next) {
                 next(error);
             }
-
         }
     }
     return res.status(403).json(

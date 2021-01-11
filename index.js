@@ -6,7 +6,7 @@ const usersRoutes = require('./routes/mainRoutes');
 
 app.use(bodyParser.json());
 
-app.use(authorization.entry);
+app.use(authorization.jwtVerifyMiddleware);
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
