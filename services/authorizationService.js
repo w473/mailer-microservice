@@ -32,7 +32,7 @@ exports.jwtVerifyMiddleware = (req, res, next) => {
                         next();
                     }
                 );
-            } catch (next) {
+            } catch (error) {
                 next(error);
             }
         }

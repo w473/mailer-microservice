@@ -17,11 +17,23 @@ router.patch(
     validate('templateEdit'),
     templatesController.updateTemplateLocale
 );
+router.delete(
+    '/templates/:templateId/locale/:locale',
+    authorization.isAdmin(),
+    validate('templateEdit'),
+    templatesController.deleteTemplateLocale
+);
 router.patch(
     '/templates/:templateId',
     authorization.isAdmin(),
     validate('templateEdit'),
     templatesController.updateTemplate
+);
+router.delete(
+    '/templates/:templateId',
+    authorization.isAdmin(),
+    validate('templateEdit'),
+    templatesController.deleteTemplate
 );
 
 router.post('', authorization.isAdmin(), validate('email'), mailsController.add);

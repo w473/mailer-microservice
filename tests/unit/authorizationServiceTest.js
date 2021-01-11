@@ -1,7 +1,8 @@
-const service = require('../services/authorizationService');
+const service = require('../../services/authorizationService');
 const httpMocks = require('node-mocks-http');
 const expect = require('chai').expect;
-
+const jwt = require('jsonwebtoken');
+const sinon = require('sinon');
 const token = 'eyJhbGciOiJSUzUxMiIsImtpZCI6IjQifQ.eyJlbWFpbCI6ImphY2VrQG1haW' +
     'wuY29tIiwiZXhwIjoxNjEwMzA5MjY4LjkzMTgyNDQsImlkIjoiNTEzMDM3MWUtZWFiOS00N' +
     '2E5LWEwMjgtNGRhMGM4MjIxYzk2IiwiaXNBY3RpdmUiOnRydWUsImxvY2FsZSI6InBsX1BM' +
@@ -27,7 +28,15 @@ it('jwtVerifyMiddleware ok', function () {
     });
     const res = httpMocks.createResponse();
 
+    const verify = sinon.fake();
+
+    sinon.replace(jwt, 'verify', verify);
+
     service.jwtVerifyMiddleware(req, res, {});
+
+    expect(verify.called).to.be.true;
+
+    sinon.restore();
 });
 
 it('jwtVerifyMiddleware no token', function () {

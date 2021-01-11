@@ -3,30 +3,37 @@ const TemplateFormatter = require('../formatters/templateFormatter');
 
 exports.getAllTemplates = (req, res, next) => {
     const where = {};
-    Template
+    return Template
         .findAndCountAll({
             where: where,
             limit: req.params.limit,
-            offset: req.params.offset
+            offset: req.params.offset,
+            include: [
+                { model: TemplateLocale }
+            ],
         })
-        .then((templates, count) => {
-            if (templates) {
-                return res.status(404).json(
-                    { message: 'Template', data: TemplateFormatter.formatAll(templates), count: count }
+        .then(result => {
+            if (result.count > 0) {
+                return res.status(200).json(
+                    { message: 'Templates', data: TemplateFormatter.formatAll(result.rows), count: result.count }
                 );
             } else {
-                return res.status(404).json({ message: 'Template has not been found' });
+                return res.status(404).json({ message: 'Templates have not been found' });
             }
         })
         .catch(err => next(err));
 }
 
 exports.getTemplate = (req, res, next) => {
-    Template
-        .findByPk(req.params.templateId)
+    return Template
+        .findByPk(req.params.templateId, {
+            include: [
+                { model: TemplateLocale }
+            ]
+        })
         .then((template) => {
             if (template) {
-                return res.status(404).json(
+                return res.status(200).json(
                     { message: 'Template', data: TemplateFormatter.formatOne(template) }
                 );
             } else {
@@ -37,38 +44,37 @@ exports.getTemplate = (req, res, next) => {
 }
 
 exports.addTemplate = (req, res, next) => {
-    const templateLocales = req.body.locales.map((el) => {
-        return TemplateLocale.build({
-            'locale': el.locale,
-            'contents': el.contents,
-            'subject': el.subject
-        })
-    });
-
-    Template
-        .create({
-            name: req.body.name,
-            templateLocales: templateLocales
-        })
+    return Template
+        .create(
+            {
+                name: req.body.name,
+                TemplatesLocales: req.body.locales
+            },
+            {
+                include: [TemplateLocale]
+            }
+        )
         .then(() => res.status(204).send())
         .catch(err => next(err));
 }
 
 exports.updateTemplate = (req, res, next) => {
-    Template
+    return Template
         .findByPk(req.params.templateId)
         .then((template) => {
             if (template) {
                 template.name = req.body.name;
+                return template.save();
             } else {
                 return res.status(404).json({ message: 'Template has not been found' });
             }
         })
+        .then(() => res.status(204).send())
         .catch(err => next(err));
 }
 
 exports.deleteTemplate = (req, res, next) => {
-    Template
+    return Template
         .destroy({ where: { id: req.params.templateId } })
         .then((deletedCount) => {
             if (deletedCount > 0) {
@@ -81,14 +87,14 @@ exports.deleteTemplate = (req, res, next) => {
 }
 
 exports.updateTemplateLocale = (req, res, next) => {
-    TemplateLocale
-        .findOne(
-            {
-                where: {
-                    templateId: req.params.templateId, locale: req.params.locale
-                }
+    return TemplateLocale
+        .findOne({
+            where: {
+                templateId: req.params.templateId,
+                locale: req.params.locale
             }
-        ).then((template) => {
+        })
+        .then((template) => {
             if (template) {
                 template.contents = req.body.contents;
                 template.subject = req.body.subject;
@@ -96,13 +102,19 @@ exports.updateTemplateLocale = (req, res, next) => {
             } else {
                 return res.status(404).json({ message: 'Template has not been found' });
             }
-        }).then(() => res.status(204).send())
+        })
+        .then(() => res.status(204).send())
         .catch(err => next(err));
 }
 
 exports.deleteTemplateLocale = (req, res, next) => {
-    TemplateLocale
-        .destroy({ where: { id: req.params.templateLocaleId } })
+    return TemplateLocale
+        .destroy({
+            where: {
+                templateId: req.params.templateId,
+                locale: req.params.locale
+            }
+        })
         .then((deletedCount) => {
             if (deletedCount > 0) {
                 return res.status(204).send();

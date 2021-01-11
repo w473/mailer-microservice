@@ -4,7 +4,7 @@ const TemplateLocaleFormatter = require('./templateLocaleFormatter');
 exports.formatOne = function (template) {
     return {
         name: template.name,
-        templateLocale: TemplateLocaleFormatter.formatAll(template.templateLocales)
+        templateLocales: TemplateLocaleFormatter.formatAll(template.TemplatesLocales)
     }
 }
 

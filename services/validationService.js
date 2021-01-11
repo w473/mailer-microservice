@@ -1,4 +1,4 @@
-const Ajv = require("ajv").default
+const { Validator, ValidationError } = require('express-json-validator-middleware');
 const addFormats = require("ajv-formats");
 
 const schemas = {
@@ -89,26 +89,14 @@ const schemas = {
     }
 };
 
-const ajv = new Ajv({ allErrors: true, schemas: schemas });
-addFormats(ajv)
+const validator = new Validator({ allErrors: true, schemas: schemas });
+addFormats(validator.ajv);
 
-class ValidationError extends Error {
-    constructor(validationErrors) {
-        super();
-        this.name = "JsonSchemaValidationError";
-        this.validationErrors = validationErrors;
-    }
-}
 /**
  * 
  * @param {String} schemaName 
  */
 module.exports = (schemaName) => {
-    return function (req, res, next) {
-        if (ajv.validate(schemaName, req.body)) {
-            return next();
-        }
-        return next(new ValidationError(ajv.errors));
-    }
+    return validator.validate({ body: schemaName });
 }
 

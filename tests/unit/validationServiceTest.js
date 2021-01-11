@@ -1,13 +1,9 @@
-const validate = require('../services/validationService');
+const validate = require('../../services/validationService');
 const httpMocks = require('node-mocks-http');
 
-const { expect, assert } = require('chai');
+const { assert } = require('chai');
 
 it('validate templateAdd Error', function () {
-
-    const req = httpMocks.createRequest();
-    const res = httpMocks.createResponse();
-
     const tests = [
         {
             body: {},
@@ -59,27 +55,12 @@ it('validate templateAdd Error', function () {
 
     ]
 
-    tests.forEach(data => {
-        req.body = data.body;
-        const next = (err) => {
-            assert.typeOf(err, 'error');
-            assert.equal(err.name, 'JsonSchemaValidationError');
-            data.errors.forEach((error, index) => {
-                assert.equal(err.validationErrors[index].message, error);
-            })
-            assert.equal(data.count, err.validationErrors.length)
-        }
-        validate('templateAdd')(req, res, next)
-    });
-
+    testValidateError('templateAdd', tests);
 });
 
 it('validate templateAdd Ok', function () {
 
-    const req = httpMocks.createRequest();
-    const res = httpMocks.createResponse();
-
-    req.body = {
+    body = {
         'name': 'potato',
         'locales': [
             {
@@ -89,11 +70,8 @@ it('validate templateAdd Ok', function () {
             }
         ],
     };
-    const next = (err) => {
-        assert.equal(err, undefined);
-    }
-    validate('templateAdd')(req, res, next)
 
+    testValidateOk('templateAdd', body);
 });
 
 it('validate templateLocale Error', function () {
@@ -126,35 +104,17 @@ it('validate templateLocale Error', function () {
         }
     ]
 
-    tests.forEach(data => {
-        req.body = data.body;
-        const next = (err) => {
-            assert.typeOf(err, 'error');
-            assert.equal(err.name, 'JsonSchemaValidationError');
-            data.errors.forEach((error, index) => {
-                assert.equal(err.validationErrors[index].message, error);
-            })
-            assert.equal(data.count, err.validationErrors.length)
-        }
-        validate('templateLocale')(req, res, next)
-    });
+    testValidateError('templateLocale', tests);
 
 });
 
 it('validate templateLocale Ok', function () {
-
-    const req = httpMocks.createRequest();
-    const res = httpMocks.createResponse();
-
-    req.body = {
+    body = {
         'locale': 'pl_PL',
         'subject': 'asdas',
         'contents': 'asdasasdas asdasasdas asdasasdas asdasasdas asdasasdas asdasasdas'
     };
-    const next = (err) => {
-        assert.equal(err, undefined);
-    }
-    validate('templateLocale')(req, res, next)
+    testValidateOk('templateLocale', body);
 
 });
 
@@ -184,41 +144,20 @@ it('validate templateLocale Error', function () {
         }
     ]
 
-    tests.forEach(data => {
-        req.body = data.body;
-        const next = (err) => {
-            assert.typeOf(err, 'error');
-            assert.equal(err.name, 'JsonSchemaValidationError');
-            data.errors.forEach((error, index) => {
-                assert.equal(err.validationErrors[index].message, error);
-            })
-            assert.equal(data.count, err.validationErrors.length)
-        }
-        validate('templateEdit')(req, res, next)
-    });
+    testValidateError('templateEdit', tests);
 
 });
 
 it('validate templateLocale Ok', function () {
-
-    const req = httpMocks.createRequest();
-    const res = httpMocks.createResponse();
-
-    req.body = {
+    body = {
         'name': 'asdasdasdpl_PL'
     };
-    const next = (err) => {
-        assert.equal(err, undefined);
-    }
-    validate('templateEdit')(req, res, next)
+
+    testValidateOk('templateEdit', body);
 });
 
 
 it('validate mail Error', function () {
-
-    const req = httpMocks.createRequest();
-    const res = httpMocks.createResponse();
-
     const tests = [
         {
             body: {},
@@ -281,27 +220,12 @@ it('validate mail Error', function () {
         }
     ]
 
-    tests.forEach(data => {
-        req.body = data.body;
-        const next = (err) => {
-            assert.typeOf(err, 'error');
-            assert.equal(err.name, 'JsonSchemaValidationError');
-            data.errors.forEach((error, index) => {
-                assert.equal(err.validationErrors[index].message, error);
-            })
-            assert.equal(data.count, err.validationErrors.length)
-        }
-        validate('email')(req, res, next)
-    });
+    testValidateError('email', tests);
 
 });
 
 it('validate mail Ok', function () {
-
-    const req = httpMocks.createRequest();
-    const res = httpMocks.createResponse();
-
-    req.body = {
+    body = {
         'locale': 'pl_PL',
         'templateId': 22,
         'recepient': {
@@ -311,8 +235,41 @@ it('validate mail Ok', function () {
         },
         'variables': {}
     };
+    testValidateOk('email', body);
+});
+
+/**
+ * 
+ * @param {String} schemaName 
+ * @param {Array} tests 
+ */
+const testValidateError = (schemaName, tests) => {
+    const req = httpMocks.createRequest();
+    const res = httpMocks.createResponse();
+    tests.forEach(data => {
+        req.body = data.body;
+        const next = (err) => {
+            assert.typeOf(err, 'error');
+            assert.equal(err.name, 'JsonSchemaValidationError');
+            data.errors.forEach((error, index) => {
+                assert.equal(err.validationErrors.body[index].message, error);
+            })
+            assert.equal(data.count, err.validationErrors.body.length)
+        }
+        validate(schemaName)(req, res, next)
+    });
+}
+/**
+ * 
+ * @param {String} schemaName 
+ * @param {Object} body 
+ */
+const testValidateOk = (schemaName, body) => {
+    const req = httpMocks.createRequest();
+    req.body = body;
+    const res = httpMocks.createResponse();
     const next = (err) => {
         assert.equal(err, undefined);
     }
-    validate('email')(req, res, next)
-});
+    validate(schemaName)(req, res, next)
+}

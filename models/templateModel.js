@@ -42,11 +42,8 @@ TemplateLocale.init({
     modelName: 'TemplatesLocales',
     indexes: [{ unique: true, fields: ['templateId', "locale"] }]
 });
-
-TemplateLocale.belongsTo(Template, {
-    foreignKey: "templateId",
-    as: "template"
-});
+Template.hasMany(TemplateLocale, { onDelete: 'CASCADE' });
+TemplateLocale.belongsTo(Template);
 
 exports.Template = Template;
 exports.TemplateLocale = TemplateLocale;

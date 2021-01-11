@@ -1,11 +1,4 @@
-module.exports = {
-    db: {
-        host: 'localhost',
-        port: 3307,
-        name: 'mailer',
-        username: 'root',
-        password: 'password'
-    },
+const config = {
     auth: {
         jwks: {
             ssl: false,
@@ -31,4 +24,22 @@ module.exports = {
             email: "some@email.js",
         }
     }
+};
+if (process.env.ENV == 'test') {
+    config.db = {
+        host: 'localhost',
+        port: 3307,
+        name: 'mailer_test',
+        username: 'root',
+        password: 'password'
+    }
+} else {
+    config.db = {
+        host: 'localhost',
+        port: 3307,
+        name: 'mailer',
+        username: 'root',
+        password: 'password'
+    }
 }
+module.exports = config;
