@@ -3,6 +3,7 @@ const sequelize = require('./utils/database');
 const bodyParser = require('body-parser');
 const authorization = require('./services/authorizationService');
 const usersRoutes = require('./routes/mainRoutes');
+const errorsController = require('./controllers/errorsController');
 
 app.use(bodyParser.json());
 
@@ -20,9 +21,13 @@ app.use((req, res, next) => {
 
 app.use(usersRoutes);
 
-app.use((req, res, next) => {
-    console.log(res)
-    next();
+app.use((req, res) => {
+    res.status(404).json({ message: 'Page you are looking for does not exist' });
+});
+
+app.use((error, req, res,) => {
+    console.log(error);
+    res.status(500).json({ message: 'Unexpected error occured' });
 });
 
 sequelize

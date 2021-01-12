@@ -17,9 +17,8 @@ exports.getAllTemplates = (req, res, next) => {
                 return res.status(200).json(
                     { message: 'Templates', data: TemplateFormatter.formatAll(result.rows), count: result.count }
                 );
-            } else {
-                return res.status(404).json({ message: 'Templates have not been found' });
             }
+            return res.status(404).json({ message: 'Templates have not been found' });
         })
         .catch(err => next(err));
 }
@@ -36,9 +35,8 @@ exports.getTemplate = (req, res, next) => {
                 return res.status(200).json(
                     { message: 'Template', data: TemplateFormatter.formatOne(template) }
                 );
-            } else {
-                return res.status(404).json({ message: 'Template has not been found' });
             }
+            return res.status(404).json({ message: 'Template has not been found' });
         })
         .catch(err => next(err));
 }
@@ -64,12 +62,12 @@ exports.updateTemplate = (req, res, next) => {
         .then((template) => {
             if (template) {
                 template.name = req.body.name;
-                return template.save();
-            } else {
-                return res.status(404).json({ message: 'Template has not been found' });
+                return template
+                    .save()
+                    .then(() => res.status(204).send());
             }
+            return res.status(404).json({ message: 'Template has not been found' });
         })
-        .then(() => res.status(204).send())
         .catch(err => next(err));
 }
 
@@ -79,9 +77,8 @@ exports.deleteTemplate = (req, res, next) => {
         .then((deletedCount) => {
             if (deletedCount > 0) {
                 return res.status(204).send();
-            } else {
-                return res.status(404).json({ message: 'Template has not been found' });
             }
+            return res.status(404).json({ message: 'Template has not been found' });
         })
         .catch(err => next(err));
 }
@@ -98,12 +95,12 @@ exports.updateTemplateLocale = (req, res, next) => {
             if (template) {
                 template.contents = req.body.contents;
                 template.subject = req.body.subject;
-                return template.save();
-            } else {
-                return res.status(404).json({ message: 'Template has not been found' });
+                return template
+                    .save()
+                    .then(() => res.status(204).send());
             }
+            return res.status(404).json({ message: 'Template Locale has not been found' });
         })
-        .then(() => res.status(204).send())
         .catch(err => next(err));
 }
 
@@ -118,9 +115,8 @@ exports.deleteTemplateLocale = (req, res, next) => {
         .then((deletedCount) => {
             if (deletedCount > 0) {
                 return res.status(204).send();
-            } else {
-                return res.status(404).json({ message: 'Template Locale has not been found' });
             }
+            return res.status(404).json({ message: 'Template Locale has not been found' });
         })
         .catch(err => next(err));
 }

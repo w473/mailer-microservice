@@ -18,9 +18,6 @@ describe("Templates", () => {
             })
 
     });
-    // afterEach(async () => {
-    //     await mockedDb.connection.rollbackPromise();
-    // });
 
     it("2 templates should be returned", async () => {
         const req = httpMocks.createRequest();
@@ -127,6 +124,21 @@ describe("Templates", () => {
         assert.equal(json.data.templateLocales[1].locale, 'en_US');
     });
 
+    it("update template 404", async () => {
+        const req = httpMocks.createRequest();
+        req.body = {
+            name: "potato"
+        };
+        req.params = { templateId: 404 }
+        let res = httpMocks.createResponse();
+
+        const next = (err) => console.log(err);
+        await templateController.updateTemplate(req, res, next);
+        assert.equal(res.statusCode, 404);
+        const json = res._getJSONData();
+        assert.equal(json.message, 'Template has not been found');
+    });
+
     it("delete template", async () => {
         const req = httpMocks.createRequest();
         req.params = { templateId: 1 }
@@ -155,16 +167,63 @@ describe("Templates", () => {
         assert.equal(json.message, 'Template has not been found');
     });
 
-
-    it("delete deleteTemplateLocale 404", async () => {
+    it("delete deleteTemplateLocale", async () => {
         const req = httpMocks.createRequest();
-        req.params = { templateId: 404 }
+        req.params = {
+            templateId: 1,
+            locale: "pl_PL"
+        }
         let res = httpMocks.createResponse();
 
         const next = (err) => console.log(err);
-        await templateController.deleteTemplate(req, res, next);
+        await templateController.deleteTemplateLocale(req, res, next);
+        assert.equal(res.statusCode, 204);
+    });
+
+    it("delete deleteTemplateLocale 404", async () => {
+        const req = httpMocks.createRequest();
+        req.params = {
+            templateId: 404,
+            locale: "pl_PL"
+        }
+        let res = httpMocks.createResponse();
+
+        const next = (err) => console.log(err);
+        await templateController.deleteTemplateLocale(req, res, next);
         assert.equal(res.statusCode, 404);
         const json = res._getJSONData();
-        assert.equal(json.message, 'Template has not been found');
+        assert.equal(json.message, 'Template Locale has not been found');
+    });
+
+    it("updateTemplateLocale 404", async () => {
+        const req = httpMocks.createRequest();
+        req.params = {
+            templateId: 404,
+            locale: "pl_PL"
+        }
+        let res = httpMocks.createResponse();
+
+        const next = (err) => console.log(err);
+        await templateController.updateTemplateLocale(req, res, next);
+        assert.equal(res.statusCode, 404);
+        const json = res._getJSONData();
+        assert.equal(json.message, 'Template Locale has not been found');
+    });
+
+    it("updateTemplateLocale", async () => {
+        const req = httpMocks.createRequest();
+        req.params = {
+            templateId: 1,
+            locale: "pl_PL"
+        }
+        req.body = {
+            subject: 'test123',
+            contents: 'test123'
+        }
+        let res = httpMocks.createResponse();
+
+        const next = (err) => console.log(err);
+        await templateController.updateTemplateLocale(req, res, next);
+        assert.equal(res.statusCode, 204);
     });
 });

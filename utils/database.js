@@ -11,7 +11,7 @@ const sequelize = new Sequelize(
         dialect: "mysql",
         dialectOptions: {
             multipleStatements: true
-        }
+        }, logging: false
     }
 );
 sequelize.addHook('beforeCount', function (options) {
