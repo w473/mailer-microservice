@@ -3,6 +3,7 @@ const sequelize = require('./utils/database');
 const bodyParser = require('body-parser');
 const authorization = require('./services/authorizationService');
 const routes = require('./routes/routes');
+const config = require('./config');
 
 app.use(bodyParser.json());
 
@@ -35,7 +36,7 @@ sequelize
     )
     .then(() => {
         console.log('Connection has been established successfully.');
-        app.listen(3000);
+        app.listen(config.port);
     })
     .catch(error => {
         console.error('Unable to connect to the database:', error);
