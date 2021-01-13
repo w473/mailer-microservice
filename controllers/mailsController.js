@@ -2,78 +2,76 @@ const config = require('../config');
 const Mail = require('../models/mailModel');
 const { TemplateLocale } = require('../models/templateModel');
 const Handlebars = require("handlebars");
-const { NotFoundApiResponseError } = require('../utils/errors');
 const { formatOne, formatAll } = require('../formatters/mailLocaleFormatter');
-const sendEmail = require('../services/emailService');
+const emailService = require('../services/emailService');
 
 exports.add = async (req, res, next) => {
     const locale = req.body.locale;
-    TemplateLocale
+    return TemplateLocale
         .findAll({
             where: {
-                'templateId': req.templateId,
+                'templateId': req.body.templateId,
                 'locale': [locale, config.other.fallbackLocale]
             }
         })
         .then(templateLocales => {
-            if (templateLocales.length > 0) {
-                let templateLocale = templateLocales.find(element => element.locale === locale);
-                if (!templateLocale) {
-                    templateLocale = templateLocales[0];
-                }
-                return templateLocale;
-            } else {
-                throw new NotFoundApiResponseError('Requested locale and fallback does not exists');
+            if (templateLocales.length === 0) {
+                res.status(404).json({ message: 'Requested locale and fallback does not exists' });
+                return;
             }
-        })
-        .then(templateLocale => {
-            const template = Handlebars.compile(templateLocale.contents);
-            return template(req.body.variables), templateLocale.subject;
-        })
-        .then(contents, subject => {
+
+            let templateLocale = templateLocales.find(element => element.locale === locale);
+            if (!templateLocale) {
+                templateLocale = templateLocales[0];
+            }
+
+            const templateSubject = Handlebars.compile(templateLocale.subject);
+            const templateContents = Handlebars.compile(templateLocale.contents);
+
             return Mail.create({
                 recepientUserId: req.body.recepient.userId,
                 recepientEmail: req.body.recepient.email,
                 recepientName: req.body.recepient.name,
-                subject: subject,
-                contents: contents
+                subject: templateSubject(req.body.variables),
+                contents: templateContents(req.body.variables)
             });
         })
         .then(email => {
-            return sendEmail(email);
+            if (email) {
+                res.status(204).send();
+                return emailService.send(email);
+            }
         })
-        .then(() => res.status(204).send())
+        .then(result => { if (result) { console.log(result) } })
         .catch(err => next(err));
 }
 
 exports.getAll = (req, res, next) => {
     const where = {}
-    Mail
+    return Mail
         .findAndCountAll({
             where: where,
             limit: req.params.limit,
             offset: req.params.offset
         })
-        .then(mails, count => {
+        .then(result => {
             return res.status(200).json(
-                { message: 'Emails found', data: formatAll(mails), count: count }
+                { message: 'Emails found', data: formatAll(result.rows), count: result.count }
             );
         })
         .catch(err => next(err));
 }
 
 exports.get = (req, res, next) => {
-    Mail
+    return Mail
         .findByPk(req.params.emailId)
         .then(mail => {
             if (mail) {
                 return res.status(200).json(
                     { message: 'Requested email has been found', data: formatOne(mail) }
                 );
-            } else {
-                return res.status(404).json({ message: 'Requested email has not been found' });
             }
-
+            return res.status(404).json({ message: 'Requested email has not been found' });
         })
         .catch(err => next(err));
 }

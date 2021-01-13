@@ -9,5 +9,5 @@ exports.formatOne = function (template) {
 }
 
 exports.formatAll = function (templates) {
-    return templates.map(template => this.formatOne(template));
+    return templates.map(template => exports.formatOne(template));
 }

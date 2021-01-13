@@ -7,11 +7,12 @@ exports.formatOne = function (email) {
             'name': email.recepientName,
         },
         'contents': email.contents,
+        'created': email.createdAt,
         'sent': email.sent,
         'error': email.error
     };
 }
 
 exports.formatAll = function (emails) {
-    return emails.map(email => this.formatOne(email));
+    return emails.map((email) => exports.formatOne(email));
 }

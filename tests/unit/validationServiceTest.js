@@ -75,10 +75,6 @@ it('validate templateAdd Ok', function () {
 });
 
 it('validate templateLocale Error', function () {
-
-    const req = httpMocks.createRequest();
-    const res = httpMocks.createResponse();
-
     const tests = [
         {
             body: {},

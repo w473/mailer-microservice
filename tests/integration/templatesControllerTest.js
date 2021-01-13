@@ -11,7 +11,7 @@ describe("Templates", () => {
         return sequelize
             .sync({ force: true })
             .then(() => {
-                return fs.readFile('tests/integration/db.sql', "utf8");
+                return fs.readFile('tests/integration/dbTemplates.sql', "utf8");
             })
             .then((sql) => {
                 return sequelize.query(sql);

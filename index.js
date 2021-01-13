@@ -2,8 +2,7 @@ const app = require('express')();
 const sequelize = require('./utils/database');
 const bodyParser = require('body-parser');
 const authorization = require('./services/authorizationService');
-const usersRoutes = require('./routes/mainRoutes');
-const errorsController = require('./controllers/errorsController');
+const routes = require('./routes/routes');
 
 app.use(bodyParser.json());
 
@@ -19,7 +18,7 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use(usersRoutes);
+app.use(routes);
 
 app.use((req, res) => {
     res.status(404).json({ message: 'Page you are looking for does not exist' });

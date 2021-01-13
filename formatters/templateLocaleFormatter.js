@@ -8,5 +8,5 @@ exports.formatOne = function (templateLocale) {
 }
 
 exports.formatAll = function (templateLocales) {
-    return templateLocales.map((templateLocale) => this.formatOne(templateLocale));
+    return templateLocales.map((templateLocale) => exports.formatOne(templateLocale));
 }

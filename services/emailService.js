@@ -16,7 +16,7 @@ const transporter = nodemailer.createTransport({
  * 
  * @param {Mail} mail 
  */
-module.export = (mail) => {
+exports.send = (mail) => {
     return transporter.sendMail({
         from: `${config.emailService.from.name} <${config.emailService.from.email}>`,
         to: `${mail.recepientName} <${mail.recepientEmail}> `,
