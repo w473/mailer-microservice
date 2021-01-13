@@ -22,7 +22,6 @@
   "dependencies": {
     "ajv-formats": "^1.5.1",
     "bcryptjs": "^2.4.3",
-    "chai-http": "^4.3.0",
     "express": "^4.17.1",
     "express-json-validator-middleware": "git+https://github.com/w473/express-json-validator-middleware.git",
     "handlebars": "^4.7.6",
