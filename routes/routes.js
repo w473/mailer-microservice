@@ -36,7 +36,7 @@ router.delete(
     templatesController.deleteTemplate
 );
 
-router.post('', authorization.isAdmin(), validate('email'), mailsController.add);
+router.post('', authorization.hasRole('ADMIN', 'SYS'), validate('email'), mailsController.add);
 
 router.get(':emailId', authorization.isAdmin(), mailsController.get);
 router.get('/:limit/:offset', authorization.isAdmin(), mailsController.getAll);
