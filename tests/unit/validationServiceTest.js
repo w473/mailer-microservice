@@ -159,7 +159,6 @@ it('validate mail Error', function () {
             body: {},
             errors: [
                 "should have required property 'recepient'",
-                "should have required property 'variables'",
                 "should have required property 'locale'",
                 "should have required property 'templateName'"
             ],
