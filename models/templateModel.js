@@ -13,7 +13,7 @@ Template.init({
     name: {
         type: DataTypes.STRING(256),
         allowNull: false,
-        unique: true
+        unique: "true"
     }
 }, { sequelize, modelName: 'Templates' });
 
@@ -40,7 +40,7 @@ TemplateLocale.init({
 }, {
     sequelize,
     modelName: 'TemplatesLocales',
-    indexes: [{ unique: true, fields: ['templateId', "locale"] }]
+    indexes: [{ unique: "true", fields: ['TemplateId', "locale"] }]
 });
 Template.hasMany(TemplateLocale, { onDelete: 'CASCADE' });
 TemplateLocale.belongsTo(Template);

@@ -38,12 +38,20 @@ exports.add = async (req, res, next) => {
             const templateSubject = Handlebars.compile(templateLocale.subject);
             const templateContents = Handlebars.compile(templateLocale.contents);
 
+            const variables = Object.assign(
+                req.body.variables,
+                {
+                    recepientUserId: req.body.recepient.userId,
+                    recepientEmail: req.body.recepient.email,
+                    recepientName: req.body.recepient.name
+                }
+            );
             return Mail.create({
                 recepientUserId: req.body.recepient.userId,
                 recepientEmail: req.body.recepient.email,
                 recepientName: req.body.recepient.name,
-                subject: templateSubject(req.body.variables),
-                contents: templateContents(req.body.variables)
+                subject: templateSubject(variables),
+                contents: templateContents(variables)
             });
         })
         .then(email => {
