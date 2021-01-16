@@ -82,7 +82,7 @@ describe("Mails", () => {
         const req = httpMocks.createRequest();
         req.body = {
             locale: 'es_ES',
-            templateId: 404
+            templateName: 'asdasd'
         };
         const res = httpMocks.createResponse();
 
@@ -97,7 +97,7 @@ describe("Mails", () => {
         const req = httpMocks.createRequest();
         req.body = {
             locale: 'de_DE',
-            templateId: 1,
+            templateName: 'template 1',
             recepient: {
                 userId: "ff620dcf-5368-49de-9cea-74ff54508ca0",
                 email: 'ssss@asqfdasd.de',

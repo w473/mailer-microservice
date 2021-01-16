@@ -161,20 +161,20 @@ it('validate mail Error', function () {
                 "should have required property 'recepient'",
                 "should have required property 'variables'",
                 "should have required property 'locale'",
-                "should have required property 'templateId'"
+                "should have required property 'templateName'"
             ],
             count: 4
         },
         {
             body: {
                 'locale': 'asdads',
-                'templateId': 'asda',
+                'templateName': 22,
                 'recepient': 'asda',
                 'variables': {}
             },
             errors: [
                 'should match pattern "^[a-z][a-z]_[A-Z][A-Z]$"',
-                "should be integer",
+                "should be string",
                 "should be object"
             ],
             count: 3
@@ -182,7 +182,7 @@ it('validate mail Error', function () {
         {
             body: {
                 'locale': 'pl_PL',
-                'templateId': '22',
+                'templateName': 'asda',
                 'recepient': {
                     'userId': 666,
                     'email': 'asdasdasd',
@@ -191,7 +191,7 @@ it('validate mail Error', function () {
                 'variables': {}
             },
             errors: [
-                'should be integer',
+                'should NOT have fewer than 5 characters',
                 "should be string",
                 'should match format "email"',
                 "should NOT have fewer than 2 characters"
@@ -201,7 +201,7 @@ it('validate mail Error', function () {
         {
             body: {
                 'locale': 'pl_PL',
-                'templateId': 22,
+                'templateName': 'asdasd',
                 'recepient': {
                     'userId': "666",
                     'email': 'aaa@eee.de',
@@ -223,7 +223,7 @@ it('validate mail Error', function () {
 it('validate mail Ok', function () {
     body = {
         'locale': 'pl_PL',
-        'templateId': 22,
+        'templateName': 'asdasd',
         'recepient': {
             'userId': '34dc5046-1d97-444a-87cf-439afb75eede',
             'email': 'email@email.de',

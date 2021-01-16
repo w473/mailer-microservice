@@ -1,21 +1,31 @@
 const config = require('../config');
 const Mail = require('../models/mailModel');
-const { TemplateLocale } = require('../models/templateModel');
+const { TemplateLocale, Template } = require('../models/templateModel');
 const Handlebars = require("handlebars");
 const { formatOne, formatAll } = require('../formatters/mailLocaleFormatter');
 const emailService = require('../services/emailService');
 
 exports.add = async (req, res, next) => {
     const locale = req.body.locale;
-    return TemplateLocale
-        .findAll({
+    return Template.findOne(
+        {
             where: {
-                'templateId': req.body.templateId,
-                'locale': [locale, config.other.fallbackLocale]
+                'name': req.body.templateName
+            }
+        })
+        .then(template => {
+            if (template) {
+                return TemplateLocale
+                    .findAll({
+                        where: {
+                            'templateId': template.id,
+                            'locale': [locale, config.other.fallbackLocale]
+                        }
+                    })
             }
         })
         .then(templateLocales => {
-            if (templateLocales.length === 0) {
+            if (!templateLocales || templateLocales.length === 0) {
                 res.status(404).json({ message: 'Requested locale and fallback does not exists' });
                 return;
             }

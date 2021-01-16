@@ -51,15 +51,17 @@ const schemas = {
     },
     email: {
         type: 'object',
-        required: ['recepient', 'variables', 'locale', 'templateId'],
+        required: ['recepient', 'variables', 'locale', 'templateName'],
         additionalProperties: false,
         properties: {
             locale: {
                 type: 'string',
                 pattern: "^[a-z][a-z]_[A-Z][A-Z]$"
             },
-            templateId: {
-                type: 'integer'
+            templateName: {
+                type: 'string',
+                minLength: 5,
+                maxLength: 256
             },
             recepient: {
                 type: 'object',
