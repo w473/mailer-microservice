@@ -162,7 +162,7 @@ it('validate mail Error', function () {
                 "should have required property 'locale'",
                 "should have required property 'templateName'"
             ],
-            count: 4
+            count: 3
         },
         {
             body: {
