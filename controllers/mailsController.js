@@ -4,9 +4,11 @@ const { TemplateLocale, Template } = require('../models/templateModel');
 const Handlebars = require("handlebars");
 const { formatOne, formatAll } = require('../formatters/mailLocaleFormatter');
 const emailService = require('../services/emailService');
+const { templates } = require('handlebars');
 
 exports.add = async (req, res, next) => {
     const locale = req.body.locale;
+    let mail = null;
     return Template.findOne(
         {
             where: {
@@ -39,7 +41,7 @@ exports.add = async (req, res, next) => {
             const templateContents = Handlebars.compile(templateLocale.contents);
 
             const variables = Object.assign(
-                req.body.variables,
+                req.body.variables ?? {},
                 {
                     recepientUserId: req.body.recepient.userId,
                     recepientEmail: req.body.recepient.email,
@@ -56,11 +58,20 @@ exports.add = async (req, res, next) => {
         })
         .then(email => {
             if (email) {
+                mail = email;
                 res.status(204).send();
                 return emailService.send(email);
             }
         })
-        .then(result => { if (result) { console.log(result) } })
+        .then(result => {
+            if (result) {
+                if (mail) {
+                    mail.sent = Date.now();
+                    return mail.save();
+                }
+                console.log(result);
+            }
+        })
         .catch(err => next(err));
 }
 

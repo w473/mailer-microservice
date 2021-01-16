@@ -2,15 +2,7 @@ const config = require('../config');
 const nodemailer = require('nodemailer');
 const Mail = require('../models/mailModel');
 
-const transporter = nodemailer.createTransport({
-    host: config.emailService.host,
-    port: config.emailService.port,
-    secure: config.emailService.secure, // true for 465, false for other ports
-    auth: {
-        user: config.emailService.user,
-        pass: config.emailService.pass
-    },
-});
+const transporter = nodemailer.createTransport(config.emailService.connection);
 
 /**
  * 

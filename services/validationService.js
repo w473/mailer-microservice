@@ -51,7 +51,7 @@ const schemas = {
     },
     email: {
         type: 'object',
-        required: ['recepient', 'variables', 'locale', 'templateName'],
+        required: ['recepient', 'locale', 'templateName'],
         additionalProperties: false,
         properties: {
             locale: {
