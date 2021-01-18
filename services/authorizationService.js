@@ -6,12 +6,15 @@ const client = jwksClient({
     jwksUri: config.auth.jwks.uri
 });
 
-function getKey(header, callback) {
-    client.getSigningKey(header.kid, function (err, key) {
-        if (key) {
-            callback(null, key.getPublicKey());
-        }
-    });
+function getKey(next) {
+    return (header, callback) => {
+        client.getSigningKey(header.kid, function (err, key) {
+            if (key) {
+                return callback(err, key.getPublicKey());
+            }
+            next(err);
+        });
+    }
 }
 
 exports.jwtVerifyMiddleware = (req, res, next) => {
@@ -22,7 +25,7 @@ exports.jwtVerifyMiddleware = (req, res, next) => {
             try {
                 return jwt.verify(
                     token,
-                    getKey,
+                    getKey(next),
                     { algorithm: config.auth.jwt.algorithm },
                     (err, token) => {
                         if (err) {
