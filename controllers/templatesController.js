@@ -6,8 +6,8 @@ exports.getAllTemplates = (req, res, next) => {
     return Template
         .findAndCountAll({
             where: where,
-            limit: req.params.limit,
-            offset: req.params.offset,
+            limit: req.query.limit ?? 10,
+            offset: req.query.offset ?? 0,
             include: [
                 { model: TemplateLocale }
             ],
@@ -15,7 +15,7 @@ exports.getAllTemplates = (req, res, next) => {
         .then(result => {
             if (result.count > 0) {
                 return res.status(200).json(
-                    { message: 'Templates', data: TemplateFormatter.formatAll(result.rows), count: result.count }
+                    { templates: TemplateFormatter.formatAll(result.rows), total: result.count }
                 );
             }
             return res.status(404).json({ message: 'Templates have not been found' });
@@ -33,7 +33,7 @@ exports.getTemplate = (req, res, next) => {
         .then((template) => {
             if (template) {
                 return res.status(200).json(
-                    { message: 'Template', data: TemplateFormatter.formatOne(template) }
+                    TemplateFormatter.formatOne(template)
                 );
             }
             return res.status(404).json({ message: 'Template has not been found' });
@@ -46,7 +46,7 @@ exports.addTemplate = (req, res, next) => {
         .create(
             {
                 name: req.body.name,
-                TemplatesLocales: req.body.locales
+                TemplatesLocales: req.body.templateLocales
             },
             {
                 include: [TemplateLocale]

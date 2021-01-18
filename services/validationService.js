@@ -30,7 +30,7 @@ const schemas = {
                 minLength: 5,
                 maxLength: 256
             },
-            locales: {
+            templateLocales: {
                 minItems: 1,
                 type: 'array',
                 items: { "$ref": "templateLocale" }

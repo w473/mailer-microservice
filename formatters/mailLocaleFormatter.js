@@ -6,6 +6,7 @@ exports.formatOne = function (email) {
             'email': email.recepientEmail,
             'name': email.recepientName,
         },
+        'subject': email.subject,
         'contents': email.contents,
         'created': email.createdAt,
         'sent': email.sent,

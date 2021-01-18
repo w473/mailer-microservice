@@ -2,9 +2,9 @@ const config = require('../config');
 const Mail = require('../models/mailModel');
 const { TemplateLocale, Template } = require('../models/templateModel');
 const Handlebars = require("handlebars");
-const { formatOne, formatAll } = require('../formatters/mailLocaleFormatter');
+const { formatAll } = require('../formatters/mailLocaleFormatter');
 const emailService = require('../services/emailService');
-const { templates } = require('handlebars');
+const e = require('express');
 
 exports.add = async (req, res, next) => {
     const locale = req.body.locale;
@@ -77,30 +77,19 @@ exports.add = async (req, res, next) => {
 
 exports.getAll = (req, res, next) => {
     const where = {}
+    if (req.query.emailId) {
+        where.emailId = req.query.emailId;
+    }
     return Mail
         .findAndCountAll({
             where: where,
-            limit: req.params.limit,
-            offset: req.params.offset
+            limit: req.query.limit ?? 10,
+            offset: req.query.offset ?? 0
         })
         .then(result => {
             return res.status(200).json(
-                { message: 'Emails found', data: formatAll(result.rows), count: result.count }
+                { mails: formatAll(result.rows), total: result.count }
             );
-        })
-        .catch(err => next(err));
-}
-
-exports.get = (req, res, next) => {
-    return Mail
-        .findByPk(req.params.emailId)
-        .then(mail => {
-            if (mail) {
-                return res.status(200).json(
-                    { message: 'Requested email has been found', data: formatOne(mail) }
-                );
-            }
-            return res.status(404).json({ message: 'Requested email has not been found' });
         })
         .catch(err => next(err));
 }

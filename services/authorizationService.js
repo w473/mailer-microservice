@@ -18,6 +18,9 @@ function getKey(next) {
 }
 
 exports.jwtVerifyMiddleware = (req, res, next) => {
+    if (req.url.indexOf('/api-docs') === 0) {
+        return next();
+    }
     const authorizationHeader = req.header('Authorization');
     if (authorizationHeader) {
         const token = req.header('Authorization').replace('Bearer ', '');
