@@ -9,14 +9,14 @@ it('validate templateAdd Error', function () {
             body: {},
             errors: [
                 "should have required property 'name'",
-                "should have required property 'locales'"
+                "should have required property 'templateLocales'"
             ],
             count: 2
         },
         {
             body: {
                 'name': 'po',
-                'locales': 'potato',
+                'templateLocales': 'potato',
                 'oiwsedfsa': 'potato',
             },
             errors: [
@@ -29,7 +29,7 @@ it('validate templateAdd Error', function () {
         {
             body: {
                 'name': 'potato',
-                'locales': [
+                'templateLocales': [
                     {
                         'locale': 'asdas',
                         'subject': 'asdas'
@@ -45,7 +45,7 @@ it('validate templateAdd Error', function () {
         {
             body: {
                 'name': 'potato',
-                'locales': [],
+                'templateLocales': [],
             },
             errors: [
                 "should NOT have fewer than 1 items"
@@ -62,7 +62,7 @@ it('validate templateAdd Ok', function () {
 
     body = {
         'name': 'potato',
-        'locales': [
+        'templateLocales': [
             {
                 'locale': 'pl_PL',
                 'subject': 'asdas',

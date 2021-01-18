@@ -22,7 +22,7 @@ const schemas = {
     },
     templateAdd: {
         type: 'object',
-        required: ['name', 'locales'],
+        required: ['name', 'templateLocales'],
         additionalProperties: false,
         properties: {
             name: {
