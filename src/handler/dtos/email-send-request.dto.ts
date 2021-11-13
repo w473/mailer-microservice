@@ -1,17 +1,16 @@
-import { IsNotEmpty, IsLocale, Length, ValidateNested } from 'class-validator';
+import { IsLocale, Length, ValidateNested } from 'class-validator';
+
 import { RecipientDto } from './recipient.dto';
 
+export class EmailSendRequestDto {
+  @Length(5, 256)
+  templateName: string;
 
-export class EmailSendRequestDto{
+  @IsLocale()
+  locale: string;
 
-    @Length(5, 256)
-    templateName: string;
+  @ValidateNested()
+  recipient: RecipientDto;
 
-    @IsLocale()
-    locale: string;
-
-    @ValidateNested()
-    recepient: RecipientDto;
-
-    variables: Map<string, string>;
+  variables: Map<string, string>;
 }

@@ -1,12 +1,15 @@
 import {
-  Entity, PrimaryGeneratedColumn, Column, OneToMany, Unique
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  Unique,
 } from 'typeorm';
 import { EmailTemplateLocaleEntity } from './email-template-locale.entity';
 
-
 @Entity('templates')
 @Unique(['name'])
-export class EmailTemplateEntity{
+export class EmailTemplateEntity {
   @PrimaryGeneratedColumn()
   id?: number;
 
@@ -15,5 +18,4 @@ export class EmailTemplateEntity{
 
   @OneToMany(() => EmailTemplateLocaleEntity, (locale) => locale.template)
   locales?: EmailTemplateLocaleEntity[];
-
 }
