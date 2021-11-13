@@ -5,7 +5,7 @@ const mailsController = require('../controllers/mailsController');
 const templatesController = require('../controllers/templatesController');
 const router = express.Router();
 const swaggerUi = require('swagger-ui-express');
-const openApiDocs = require('./openApiDocs.json');
+const openApiDocs = require('../../../srcold/routes/openApiDocs.json');
 
 router.use('/api-docs', swaggerUi.serve);
 router.get('/api-docs', swaggerUi.setup(openApiDocs));

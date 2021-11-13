@@ -1,10 +1,8 @@
-const dotenvConfig = require('dotenv').config();
-
 const getVar = (varName) => {
   return String(process.env[varName]);
 };
 
-const config = {
+export const config = {
   env: getVar('ENV'),
   port: getVar('PORT'),
   logging: {
@@ -38,5 +36,3 @@ const config = {
   },
   activationURL: getVar('ACTIVATION_URL')
 };
-
-module.exports = config;

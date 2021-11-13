@@ -1,0 +1,11 @@
+{
+   "type": "postgres",
+   "url": "postgres://root:pass@postgres.dbs:5432/mailing",
+   "synchronize": false,
+   "entities": ["src/**/*.entity{.ts,.js}"],
+   "migrations": ["src/infrastructure/db/migrations/*.ts", "dist/migrations/*.js"],
+   "cli": {
+      "entitiesDir": "src/infrastructure/db/entities",
+      "migrationsDir": "src/infrastructure/db/migrations"
+   }
+}

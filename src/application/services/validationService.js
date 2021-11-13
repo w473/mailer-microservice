@@ -49,46 +49,7 @@ const schemas = {
             }
         }
     },
-    email: {
-        type: 'object',
-        required: ['recepient', 'locale', 'templateName'],
-        additionalProperties: false,
-        properties: {
-            locale: {
-                type: 'string',
-                pattern: "^[a-z][a-z]_[A-Z][A-Z]$"
-            },
-            templateName: {
-                type: 'string',
-                minLength: 5,
-                maxLength: 256
-            },
-            recepient: {
-                type: 'object',
-                required: ['userId', 'email', 'name'],
-                additionalProperties: false,
-                properties: {
-                    'userId': {
-                        type: 'string',
-                        format: 'uuid'
-                    },
-                    'email': {
-                        type: 'string',
-                        format: 'email'
-                    },
-                    'name': {
-                        type: 'string',
-                        minLength: 2,
-                        maxLength: 256
-                    },
-                }
-            },
-            variables: {
-                type: 'object',
-                additionalProperties: true
-            }
-        }
-    }
+    
 };
 
 const validator = new Validator({ allErrors: true, schemas: schemas });

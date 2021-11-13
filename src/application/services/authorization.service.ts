@@ -1,4 +1,4 @@
-const config = require('../config');
+const config = require('../../../srcold/config');
 const jwksClient = require('jwks-rsa');
 const jwt = require('jsonwebtoken');
 const client = jwksClient({

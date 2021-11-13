@@ -6,13 +6,22 @@ const { formatAll } = require('../formatters/mailLocaleFormatter');
 const emailService = require('../services/emailService');
 const e = require('express');
 
-exports.add = async (req, res, next) => {
-    const locale = req.body.locale;
+import { Body, Controller, Get, NotFoundException, Post } from '@nestjs/common';
+import { EmailTemplateService } from '../../application/services/email-template.service';
+import { EmailSendRequestDto } from '../dtos/email-send-request.dto';
+
+
+@Controller()
+export class MailsController{
+    constructor(private readonly emailTemplateService: EmailTemplateService) {}
+
+    @Post()
+ async send (@Body() emailSendRequestDto: EmailSendRequestDto ): Promise<void> {
     let mail = null;
     return Template.findOne(
         {
             where: {
-                'name': req.body.templateName
+                'name': emailSendRequestDto.templateName
             }
         })
         .then(template => {
@@ -21,18 +30,17 @@ exports.add = async (req, res, next) => {
                     .findAll({
                         where: {
                             'templateId': template.id,
-                            'locale': [locale, config.other.fallbackLocale]
+                            'locale': [emailSendRequestDto.locale, config.other.fallbackLocale]
                         }
                     })
             }
         })
         .then(templateLocales => {
             if (!templateLocales || templateLocales.length === 0) {
-                res.status(404).json({ message: 'Requested locale and fallback does not exists' });
-                return;
+                throw new NotFoundException('Requested locale and fallback does not exists');
             }
 
-            let templateLocale = templateLocales.find(element => element.locale === locale);
+            let templateLocale = templateLocales.find(element => element.locale === emailSendRequestDto.locale);
             if (!templateLocale) {
                 templateLocale = templateLocales[0];
             }
@@ -41,17 +49,17 @@ exports.add = async (req, res, next) => {
             const templateContents = Handlebars.compile(templateLocale.contents);
 
             const variables = Object.assign(
-                req.body.variables ?? {},
+                emailTemplate.variables ?? {},
                 {
-                    recepientUserId: req.body.recepient.userId,
-                    recepientEmail: req.body.recepient.email,
-                    recepientName: req.body.recepient.name
+                    recepientUserId: emailTemplate.recepient.userId,
+                    recepientEmail: emailTemplate.recepient.email,
+                    recepientName: emailTemplate.recepient.name
                 }
             );
             return Mail.create({
-                recepientUserId: req.body.recepient.userId,
-                recepientEmail: req.body.recepient.email,
-                recepientName: req.body.recepient.name,
+                recepientUserId: emailTemplate.recepient.userId,
+                recepientEmail: emailTemplate.recepient.email,
+                recepientName: emailTemplate.recepient.name,
                 subject: templateSubject(variables),
                 contents: templateContents(variables)
             });
@@ -74,22 +82,6 @@ exports.add = async (req, res, next) => {
         })
         .catch(err => next(err));
 }
-
-exports.getAll = (req, res, next) => {
-    const where = {}
-    if (req.query.emailId) {
-        where.emailId = req.query.emailId;
-    }
-    return Mail
-        .findAndCountAll({
-            where: where,
-            limit: req.query.limit ?? 10,
-            offset: req.query.offset ?? 0
-        })
-        .then(result => {
-            return res.status(200).json(
-                { mails: formatAll(result.rows), total: result.count }
-            );
-        })
-        .catch(err => next(err));
 }
+
+

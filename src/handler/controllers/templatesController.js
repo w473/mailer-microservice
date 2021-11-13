@@ -1,5 +1,5 @@
-const { Template, TemplateLocale } = require('../models/templateModel');
-const TemplateFormatter = require('../formatters/templateFormatter');
+const { Template, TemplateLocale } = require('../../../srcold/models/templateModel');
+const TemplateFormatter = require('../dtos/templateFormatter');
 
 exports.getAllTemplates = (req, res, next) => {
   const where = {};
