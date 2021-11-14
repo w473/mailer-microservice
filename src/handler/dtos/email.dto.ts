@@ -4,7 +4,7 @@ import {
   fromEmailRecipientEntities,
 } from './email-recipient.dto';
 
-export interface EmailDto {
+export class EmailDto {
   id: number;
   recipients: EmailRecipientDto[];
   subject: string;

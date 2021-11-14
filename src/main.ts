@@ -5,7 +5,6 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { ErrorsInterceptor } from './handler/interceptors/errors.interceptor';
 import { DatabaseModule } from './infrastructure/db/database.module';
-import { RolesGuard } from './handler/auth/roles.guard';
 
 async function bootstrap() {
   @Module({
@@ -26,13 +25,13 @@ async function bootstrap() {
     }),
   );
   app.useGlobalInterceptors(new ErrorsInterceptor());
-  app.useGlobalGuards(new RolesGuard());
   app.enableCors();
 
   const config = new DocumentBuilder()
     .setTitle('Mailer')
-    .setDescription('Mailer API description')
+    .setDescription('Mailer API')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);

@@ -1,14 +1,18 @@
 import { IsLocale, MinLength } from 'class-validator';
 import { EmailTemplateLocaleEntity } from '../../infrastructure/db/entities/email-template-locale.entity';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class EmailTemplateLocaleDto {
   @IsLocale()
+  @ApiProperty()
   locale: string;
 
   @MinLength(5)
+  @ApiProperty()
   subject: string;
 
   @MinLength(50)
+  @ApiProperty()
   contents: string;
 }
 

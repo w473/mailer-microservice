@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 import { EmailTemplateEntity } from './email-template.entity';
 
-@Entity('templates')
+@Entity('email_templates_locale')
 @Unique(['locale', 'template'])
 export class EmailTemplateLocaleEntity {
   @PrimaryGeneratedColumn()

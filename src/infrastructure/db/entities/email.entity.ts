@@ -1,7 +1,14 @@
-import { Column, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { EmailTemplateEntity } from './email-template.entity';
 import { EmailRecipientEntity } from './email-recipient.entity';
 
+@Entity('email')
 export class EmailEntity {
   @PrimaryGeneratedColumn()
   id: number;

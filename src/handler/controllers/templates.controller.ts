@@ -13,7 +13,12 @@ import {
 } from '@nestjs/common';
 import { HasRole } from '../decorators/has-role.decorator';
 import { JwtAuthGuard } from '../auth/jwt.auth.guard';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { ItemsWithTotalResponseDto } from '../dtos/items-with-total-response.dto';
 import {
   EmailTemplateDto,
@@ -22,6 +27,7 @@ import {
 } from '../dtos/email-template.dto';
 import { NameDto } from '../dtos/name.dto';
 import { EmailTemplateLocaleDto } from '../dtos/email-template-locale.dto';
+import { ApiOkResponse } from '@nestjs/swagger/dist/decorators/api-response.decorator';
 
 @UseGuards(JwtAuthGuard)
 @Controller('templates')
@@ -31,9 +37,14 @@ export class TemplatesController {
 
   @Get()
   @HasRole('ADMIN')
+  @ApiOkResponse({
+    description: 'Response with all found templates and total number',
+  })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  @ApiQuery({ name: 'page', required: false, type: Number })
   async getAllTemplates(
-    @Query('limit') limit?: number,
-    @Query('page') page?: number,
+    @Query('limit') limit = 10,
+    @Query('page') page = 0,
   ): Promise<ItemsWithTotalResponseDto<EmailTemplateDto>> {
     const templates = await this.emailTemplateService.findAllTemplates(
       {},
@@ -48,6 +59,8 @@ export class TemplatesController {
 
   @Get(':templateId')
   @HasRole('ADMIN')
+  @ApiOkResponse({ type: EmailTemplateDto })
+  @ApiNotFoundResponse({ description: 'Template does not exist' })
   async findOneById(
     @Param('templateId') templateId: number,
   ): Promise<EmailTemplateDto> {
@@ -55,17 +68,19 @@ export class TemplatesController {
     if (emailTemplate) {
       return fromEmailTemplateEntity(emailTemplate);
     }
-    throw new NotFoundException('Template does not exists');
+    throw new NotFoundException('Template does not exist');
   }
 
   @Post()
-  @HasRole('ADMIN') //templateAdd
+  @HasRole('ADMIN')
   async addTemplate(@Body() emailTemplateDto: EmailTemplateDto): Promise<void> {
     return this.emailTemplateService.addTemplate(emailTemplateDto);
   }
 
   @Patch(':templateId')
-  @HasRole('ADMIN') //templateEdit
+  @HasRole('ADMIN')
+  @ApiCreatedResponse({ description: 'Template has been updated' })
+  @ApiNotFoundResponse({ description: 'Template does not exist' })
   async updateTemplate(
     @Param('templateId') templateId: number,
     @Body() nameDto: NameDto,
@@ -79,7 +94,8 @@ export class TemplatesController {
   }
 
   @Patch(':templateId/locale')
-  @HasRole('ADMIN') //templateEdit
+  @HasRole('ADMIN')
+  @ApiCreatedResponse({ description: 'Template locale has been updated' })
   async updateTemplateLocale(
     @Param('templateId') templateId: number,
     @Body() templateLocaleDto: EmailTemplateLocaleDto,
@@ -92,12 +108,14 @@ export class TemplatesController {
 
   @Delete(':templateId')
   @HasRole('ADMIN')
+  @ApiCreatedResponse({ description: 'Template has been deleted' })
   async deleteTemplate(@Param('templateId') templateId: number): Promise<void> {
     return this.emailTemplateService.deleteTemplateById(templateId);
   }
 
   @Delete(':templateId/:locale')
   @HasRole('ADMIN')
+  @ApiCreatedResponse({ description: 'Template locale has been updated' })
   async deleteTemplateLocale(
     @Param('templateId') templateId: number,
     @Param('locale') locale: string,
