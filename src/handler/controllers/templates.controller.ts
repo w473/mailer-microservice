@@ -4,7 +4,6 @@ import {
   Get,
   Query,
   Param,
-  UseGuards,
   NotFoundException,
   Post,
   Body,
@@ -12,7 +11,6 @@ import {
   Delete,
 } from '@nestjs/common';
 import { HasRole } from '../decorators/has-role.decorator';
-import { JwtAuthGuard } from '../auth/jwt.auth.guard';
 import {
   ApiCreatedResponse,
   ApiNotFoundResponse,
@@ -29,7 +27,6 @@ import { NameDto } from '../dtos/name.dto';
 import { EmailTemplateLocaleDto } from '../dtos/email-template-locale.dto';
 import { ApiOkResponse } from '@nestjs/swagger/dist/decorators/api-response.decorator';
 
-@UseGuards(JwtAuthGuard)
 @Controller('templates')
 @ApiTags('templates')
 export class TemplatesController {
@@ -40,11 +37,11 @@ export class TemplatesController {
   @ApiOkResponse({
     description: 'Response with all found templates and total number',
   })
-  @ApiQuery({ name: 'limit', required: false, type: Number })
-  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false })
+  @ApiQuery({ name: 'page', required: false })
   async getAllTemplates(
-    @Query('limit') limit = 10,
-    @Query('page') page = 0,
+    @Query('limit') limit: number = 10,
+    @Query('page') page: number = 0,
   ): Promise<ItemsWithTotalResponseDto<EmailTemplateDto>> {
     const templates = await this.emailTemplateService.findAllTemplates(
       {},

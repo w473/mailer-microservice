@@ -1,12 +1,9 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { PassportModule } from '@nestjs/passport';
 import { TerminusModule } from '@nestjs/terminus';
 import { HttpModule } from '@nestjs/axios';
 import { TypeOrmModule } from '@nestjs/typeorm';
-
 import { APP_GUARD } from '@nestjs/core';
 import { LoggerMiddleware } from './handler/middlewares/logger.middleware';
-import { JwtStrategy } from './handler/auth/jwt.strategy';
 import { HealthController } from './handler/controllers/health.controller';
 import { EmailEntity } from './infrastructure/db/entities/email.entity';
 import { EmailRecipientEntity } from './infrastructure/db/entities/email-recipient.entity';
@@ -17,6 +14,7 @@ import { EmailsController } from 'src/handler/controllers/emails.controller';
 import { TemplatesController } from 'src/handler/controllers/templates.controller';
 import { EmailService } from 'src/application/services/email.service';
 import { EmailTemplateService } from 'src/application/services/email-template.service';
+import { AuthGuard } from 'src/handler/auth/auth.guard';
 
 @Module({
   imports: [
@@ -26,15 +24,17 @@ import { EmailTemplateService } from 'src/application/services/email-template.se
       EmailTemplateEntity,
       EmailTemplateLocaleEntity,
     ]),
-    PassportModule,
     TerminusModule,
     HttpModule,
   ],
   controllers: [HealthController, EmailsController, TemplatesController],
   providers: [
-    JwtStrategy,
     EmailService,
     EmailTemplateService,
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
     {
       provide: APP_GUARD,
       useClass: RolesGuard,

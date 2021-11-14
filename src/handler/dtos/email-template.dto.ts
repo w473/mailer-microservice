@@ -5,17 +5,19 @@ import {
 import { EmailTemplateEntity } from '../../infrastructure/db/entities/email-template.entity';
 import { Length, ValidateNested } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 
 export class EmailTemplateDto {
   @ApiProperty()
   id?: number;
 
-  @Length(5, 256)
   @ApiProperty()
+  @Length(5, 256)
   name?: string;
 
-  @ValidateNested()
   @ApiProperty({ type: [EmailTemplateLocaleDto] })
+  @ValidateNested()
+  @Type(() => EmailTemplateLocaleDto)
   locales?: EmailTemplateLocaleDto[];
 }
 

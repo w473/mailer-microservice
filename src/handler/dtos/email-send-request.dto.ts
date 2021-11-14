@@ -2,6 +2,8 @@ import { IsLocale, IsString, Length, ValidateNested } from 'class-validator';
 
 import { RecipientDto } from './recipient.dto';
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+import { VariablesDto } from 'src/handler/dtos/variables.dto';
 
 export class EmailSendRequestDto {
   @Length(5, 256)
@@ -13,10 +15,13 @@ export class EmailSendRequestDto {
   @ApiProperty()
   locale: string;
 
-  @ValidateNested()
   @ApiProperty()
+  @ValidateNested()
+  @Type(() => RecipientDto)
   recipient: RecipientDto;
 
   @ApiProperty()
-  variables: Record<string, string>;
+  @ValidateNested()
+  @Type(() => VariablesDto)
+  variables: VariablesDto[];
 }

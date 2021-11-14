@@ -7,6 +7,9 @@ import { EmailTemplateEntity } from '../../infrastructure/db/entities/email-temp
 import { EmailSendRequestDto } from '../../handler/dtos/email-send-request.dto';
 import { config } from '../../config';
 import { EmailEntity } from '../../infrastructure/db/entities/email.entity';
+import { EmailTemplateLocaleEntity } from 'src/infrastructure/db/entities/email-template-locale.entity';
+import { DomainException } from 'src/domain/exceptions/domain.exception';
+import { EmailRecipientEntity } from 'src/infrastructure/db/entities/email-recipient.entity';
 
 @Injectable()
 export class EmailService {
@@ -19,18 +22,21 @@ export class EmailService {
   ) {}
 
   async send(emailSendRequestDto: EmailSendRequestDto): Promise<void> {
-    const template = await this.emailTemplateRepository.findOne({
-      where: {
+    const template = await this.emailTemplateRepository
+      .createQueryBuilder('template')
+      .innerJoinAndSelect('template.locales', 'locale')
+      .where('template.name = :name ', {
         name: emailSendRequestDto.templateName,
-        locales: {
-          locale: [emailSendRequestDto.locale, config.other.fallbackLocale],
-        },
-      },
-      relations: ['templateLocales'],
-    });
-
-    if (template) {
-      throw new Error('Requested locale and fallback does not exists');
+      })
+      .andWhere('locale.locale IN (:locale, :fallbackLocale)', {
+        locale: emailSendRequestDto.locale,
+        fallbackLocale: config.other.fallbackLocale,
+      })
+      .getOne();
+    if (!template) {
+      throw new DomainException(
+        'Requested locale and fallback does not exists',
+      );
     }
 
     let templateLocale = template.locales.find(
@@ -49,17 +55,18 @@ export class EmailService {
       recipientName: emailSendRequestDto.recipient.name,
     });
     const email = new EmailEntity();
+    email.template = template;
     email.subject = templateSubject(variables);
     email.contents = templateContents(variables);
-    email.recipients = [
-      {
-        userId: emailSendRequestDto.recipient.userId,
-        email: emailSendRequestDto.recipient.email,
-        name: emailSendRequestDto.recipient.name,
-      },
-    ];
+    const recipient = new EmailRecipientEntity();
+    recipient.emailAddress = emailSendRequestDto.recipient.email;
+    recipient.userId = emailSendRequestDto.recipient.userId;
+    recipient.name = emailSendRequestDto.recipient.name;
+    recipient.email = email;
+    email.recipients = [recipient];
 
-    await this.emailRepository.save(email);
+    await this.emailRepository.manager.save([email, recipient]);
+
     await this.sendEmail(email);
   }
 
@@ -78,7 +85,7 @@ export class EmailService {
     email.recipients.forEach((recipient) => {
       void transporter.sendMail({
         from: `${config.emailService.from.name} <${config.emailService.from.email}>`,
-        to: `${recipient.name} <${recipient.email}> `,
+        to: `${recipient.name} <${recipient.emailAddress}> `,
         subject: email.subject,
         html: email.contents,
       });

@@ -21,13 +21,13 @@ export class EmailTemplateService {
       where: where,
       skip: offset * limit,
       take: limit,
-      relations: ['templateLocales'],
+      relations: ['locales'],
     });
   }
 
   async getById(templateId: number): Promise<EmailTemplateEntity> {
     return this.emailTemplateRepository.findOne(templateId, {
-      relations: ['templateLocales'],
+      relations: ['locales'],
     });
   }
 

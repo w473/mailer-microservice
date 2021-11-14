@@ -22,6 +22,8 @@ export class EmailTemplateLocaleEntity {
   @Column()
   contents?: string;
 
-  @ManyToOne(() => EmailTemplateEntity, (template) => template.locales)
+  @ManyToOne(() => EmailTemplateEntity, (template) => template.locales, {
+    nullable: false,
+  })
   template?: EmailTemplateEntity;
 }

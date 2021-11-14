@@ -2,15 +2,15 @@ import { IsEmail, Length, IsUUID } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class RecipientDto {
-  @IsUUID()
   @ApiProperty()
+  @IsUUID()
   userId: string;
 
-  @IsEmail()
   @ApiProperty()
+  @IsEmail()
   email: string;
 
-  @Length(5, 256)
   @ApiProperty()
+  @Length(5, 256)
   name: string;
 }

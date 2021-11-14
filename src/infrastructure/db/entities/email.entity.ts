@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -13,7 +14,10 @@ export class EmailEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToMany(() => EmailRecipientEntity, (recipients) => recipients.mail)
+  @OneToMany(
+    () => EmailRecipientEntity,
+    (recipients) => recipients.emailAddress,
+  )
   recipients: EmailRecipientEntity[];
 
   @Column({ length: 1024 })
@@ -22,12 +26,12 @@ export class EmailEntity {
   @Column()
   contents: string;
 
-  @Column()
-  sent: Date;
+  @Column({ nullable: true })
+  sent: Date | null;
 
-  @Column()
-  error: string;
+  @Column({ nullable: true })
+  error: string | null;
 
-  @ManyToOne(() => EmailTemplateEntity)
+  @ManyToOne(() => EmailTemplateEntity, { nullable: false })
   template: EmailTemplateEntity;
 }

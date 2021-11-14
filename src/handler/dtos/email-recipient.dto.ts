@@ -11,7 +11,7 @@ const fromEmailRecipientEntity = (
 ): EmailRecipientDto => {
   return {
     userId: emailRecipientEntity.userId,
-    email: emailRecipientEntity.email,
+    email: emailRecipientEntity.emailAddress,
     name: emailRecipientEntity.name,
   };
 };

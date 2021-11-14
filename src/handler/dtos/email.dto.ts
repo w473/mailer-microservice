@@ -18,7 +18,9 @@ const fromEmailEntity = (emailEntity: EmailEntity): EmailDto => {
     subject: emailEntity.subject,
     contents: emailEntity.contents,
     sent: emailEntity.sent,
-    recipients: fromEmailRecipientEntities(emailEntity.recipients),
+    recipients: emailEntity.recipients
+      ? fromEmailRecipientEntities(emailEntity.recipients)
+      : null,
   };
 };
 

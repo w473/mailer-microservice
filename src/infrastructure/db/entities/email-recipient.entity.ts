@@ -6,15 +6,17 @@ export class EmailRecipientEntity {
   @PrimaryGeneratedColumn()
   id?: number;
 
-  @ManyToOne(() => EmailEntity, (mail) => mail.recipients)
-  mail?: EmailEntity;
+  @ManyToOne(() => EmailEntity, (email) => email.recipients, {
+    nullable: false,
+  })
+  email?: EmailEntity;
 
   @Column({ type: 'uuid' })
   userId: string;
 
   @Column({ length: 1024 })
-  email: string;
+  emailAddress: string;
 
-  @Column({ length: 8 })
+  @Column({ length: 1024 })
   name: string;
 }
