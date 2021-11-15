@@ -5,11 +5,10 @@ import Handlebars = require('handlebars');
 import { createTransport } from 'nodemailer';
 import { EmailTemplateEntity } from '../../infrastructure/db/entities/email-template.entity';
 import { EmailSendRequestDto } from '../../handler/dtos/email-send-request.dto';
-import { config } from '../../config';
 import { EmailEntity } from '../../infrastructure/db/entities/email.entity';
-import { EmailTemplateLocaleEntity } from 'src/infrastructure/db/entities/email-template-locale.entity';
 import { DomainException } from 'src/domain/exceptions/domain.exception';
 import { EmailRecipientEntity } from 'src/infrastructure/db/entities/email-recipient.entity';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class EmailService {
@@ -19,6 +18,7 @@ export class EmailService {
 
     @InjectRepository(EmailEntity)
     private emailRepository: Repository<EmailEntity>,
+    private configService: ConfigService,
   ) {}
 
   async send(emailSendRequestDto: EmailSendRequestDto): Promise<void> {
@@ -30,7 +30,7 @@ export class EmailService {
       })
       .andWhere('locale.locale IN (:locale, :fallbackLocale)', {
         locale: emailSendRequestDto.locale,
-        fallbackLocale: config.other.fallbackLocale,
+        fallbackLocale: this.configService.get('FALLBACK_LOCALE'),
       })
       .getOne();
     if (!template) {
@@ -73,18 +73,19 @@ export class EmailService {
   private async sendEmail(email: EmailEntity): Promise<void> {
     // needs to be replaced with e.g. Bull
     const transporter = createTransport({
-      host: config.emailService.connection.host,
-      port: Number.parseInt(config.emailService.connection.port, 10),
-      secure: config.emailService.connection.port === '465',
+      host: this.configService.get('EMAIL_SERVICE_HOST'),
+      port: Number.parseInt(this.configService.get('EMAIL_SERVICE_PORT'), 10),
+      secure: this.configService.get('EMAIL_SERVICE_PORT') === '465',
       auth: {
-        user: config.emailService.connection.auth.user,
-        pass: config.emailService.connection.auth.pass,
+        user: this.configService.get('EMAIL_SERVICE_USER'),
+        pass: this.configService.get('EMAIL_SERVICE_PASS'),
       },
     });
-
+    const fromName = this.configService.get('EMAIL_FROM_NAME');
+    const fromEmail = this.configService.get('EMAIL_FROM_EMAIL');
     email.recipients.forEach((recipient) => {
       void transporter.sendMail({
-        from: `${config.emailService.from.name} <${config.emailService.from.email}>`,
+        from: `${fromName} <${fromEmail}>`,
         to: `${recipient.name} <${recipient.emailAddress}> `,
         subject: email.subject,
         html: email.contents,
