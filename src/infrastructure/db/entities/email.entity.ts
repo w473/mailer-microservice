@@ -14,10 +14,7 @@ export class EmailEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToMany(
-    () => EmailRecipientEntity,
-    (recipients) => recipients.emailAddress,
-  )
+  @OneToMany(() => EmailRecipientEntity, (recipients) => recipients.email)
   recipients: EmailRecipientEntity[];
 
   @Column({ length: 1024 })

@@ -2,13 +2,15 @@ import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import Handlebars = require('handlebars');
-import { createTransport } from 'nodemailer';
 import { EmailTemplateEntity } from '../../infrastructure/db/entities/email-template.entity';
 import { EmailSendRequestDto } from '../../handler/dtos/email-send-request.dto';
 import { EmailEntity } from '../../infrastructure/db/entities/email.entity';
 import { DomainException } from 'src/domain/exceptions/domain.exception';
 import { EmailRecipientEntity } from 'src/infrastructure/db/entities/email-recipient.entity';
 import { ConfigService } from '@nestjs/config';
+import { InjectQueue } from '@nestjs/bull';
+import { Queue } from 'bull';
+import { EMAIL_SEND_QUEUE } from 'src/handler/consumers/email-queue.consumer';
 
 @Injectable()
 export class EmailService {
@@ -19,6 +21,7 @@ export class EmailService {
     @InjectRepository(EmailEntity)
     private emailRepository: Repository<EmailEntity>,
     private configService: ConfigService,
+    @InjectQueue('emails') private emailsQueue: Queue,
   ) {}
 
   async send(emailSendRequestDto: EmailSendRequestDto): Promise<void> {
@@ -46,6 +49,10 @@ export class EmailService {
       templateLocale = template.locales[0];
     }
 
+    Handlebars.registerHelper('helperMissing', (...argumentsz) => {
+      const options = argumentsz[argumentsz.length - 1];
+      throw new DomainException('Missing: ' + options.name);
+    });
     const templateSubject = Handlebars.compile(templateLocale.subject);
     const templateContents = Handlebars.compile(templateLocale.contents);
 
@@ -67,30 +74,13 @@ export class EmailService {
 
     await this.emailRepository.manager.save([email, recipient]);
 
-    await this.sendEmail(email);
-  }
-
-  private async sendEmail(email: EmailEntity): Promise<void> {
-    // needs to be replaced with e.g. Bull
-    const transporter = createTransport({
-      host: this.configService.get('EMAIL_SERVICE_HOST'),
-      port: Number.parseInt(this.configService.get('EMAIL_SERVICE_PORT'), 10),
-      secure: this.configService.get('EMAIL_SERVICE_PORT') === '465',
-      auth: {
-        user: this.configService.get('EMAIL_SERVICE_USER'),
-        pass: this.configService.get('EMAIL_SERVICE_PASS'),
+    await this.emailsQueue.add(
+      EMAIL_SEND_QUEUE,
+      { emailId: email.id },
+      {
+        removeOnComplete: true,
       },
-    });
-    const fromName = this.configService.get('EMAIL_FROM_NAME');
-    const fromEmail = this.configService.get('EMAIL_FROM_EMAIL');
-    email.recipients.forEach((recipient) => {
-      void transporter.sendMail({
-        from: `${fromName} <${fromEmail}>`,
-        to: `${recipient.name} <${recipient.emailAddress}> `,
-        subject: email.subject,
-        html: email.contents,
-      });
-    });
+    );
   }
 
   async findAllBy(

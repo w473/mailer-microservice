@@ -8,9 +8,9 @@ export class manualMigration1637000363205 implements MigrationInterface {
 
       INSERT INTO email_templates_locales (locale, subject, contents, template_id) 
       VALUES
-      ('en_US', 'Hello {{recepientName}}', 'Hi<br> please confirm you email by clicking <a href="{{activationURL}}">here</a>',
+      ('en_US', 'Hello {{recipientName}}', 'Hi<br> please confirm you email by clicking <a href="{{activationURL}}">here</a>',
         (SELECT id FROM email_templates WHERE name='New user')),
-      ('pl_PL', 'Witaj {{recepientName}}','Hej<br> potwierdź swój email klikając <a href="{{activationURL}}">tutaj</a>',
+      ('pl_PL', 'Witaj {{recipientName}}','Hej<br> potwierdź swój email klikając <a href="{{activationURL}}">tutaj</a>',
         (SELECT id FROM email_templates WHERE name='New user')),
       ('en_US', 'Email Activation','Hi<br> please confirm you email by clicking <a href="{{activationURL}}">here</a>',
         (SELECT id FROM email_templates WHERE name='User email changed activate')),

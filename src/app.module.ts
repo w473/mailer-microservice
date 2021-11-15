@@ -15,6 +15,10 @@ import { TemplatesController } from 'src/handler/controllers/templates.controlle
 import { EmailService } from 'src/application/services/email.service';
 import { EmailTemplateService } from 'src/application/services/email-template.service';
 import { AuthGuard } from 'src/handler/auth/auth.guard';
+import { BullModule } from '@nestjs/bull';
+import { ConfigService } from '@nestjs/config';
+import { EmailQueueConsumer } from 'src/handler/consumers/email-queue.consumer';
+import { EmailSendService } from 'src/application/services/email-send.service';
 
 @Module({
   imports: [
@@ -26,6 +30,20 @@ import { AuthGuard } from 'src/handler/auth/auth.guard';
     ]),
     TerminusModule,
     HttpModule,
+    BullModule.forRootAsync({
+      imports: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        redis: {
+          host: configService.get('REDIS_HOST'),
+          password: configService.get('REDIS_PASSWORD'),
+          port: 6379,
+        },
+      }),
+      inject: [ConfigService],
+    }),
+    BullModule.registerQueue({
+      name: 'emails',
+    }),
   ],
   controllers: [HealthController, EmailsController, TemplatesController],
   providers: [
@@ -39,6 +57,8 @@ import { AuthGuard } from 'src/handler/auth/auth.guard';
       provide: APP_GUARD,
       useClass: RolesGuard,
     },
+    EmailQueueConsumer,
+    EmailSendService,
   ],
 })
 export class AppModule implements NestModule {
