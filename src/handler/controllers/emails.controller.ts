@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  ParseIntPipe,
-  Post,
-  Query,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 
 import { EmailSendRequestDto } from '../dtos/email-send-request.dto';
 import { EmailService } from '../../application/services/email.service';
@@ -15,6 +7,7 @@ import { ItemsWithTotalResponseDto } from '../dtos/items-with-total-response.dto
 import { HasRole } from '../decorators/has-role.decorator';
 import { ApiCreatedResponse, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ApiOkResponse } from '@nestjs/swagger/dist/decorators/api-response.decorator';
+import { ParseIntPipeOrDefault } from 'src/handler/pipes/ParseIntPipeOrDefault';
 
 @Controller()
 @ApiTags('emails')
@@ -37,9 +30,10 @@ export class EmailsController {
   @ApiQuery({ name: 'limit', required: false })
   @ApiQuery({ name: 'page', required: false })
   async getAll(
-    @Query('email_id') emailId?: number,
-    @Query('limit') limit: number = 10,
-    @Query('page') page: number = 0,
+    @Query('limit', new ParseIntPipeOrDefault({ def: 10 })) limit: number,
+    @Query('page', new ParseIntPipeOrDefault({ def: 0 })) page: number,
+    @Query('email_id', new ParseIntPipeOrDefault({ def: null }))
+    emailId?: number,
   ): Promise<ItemsWithTotalResponseDto<EmailDto>> {
     const where: any = {};
     if (emailId) {

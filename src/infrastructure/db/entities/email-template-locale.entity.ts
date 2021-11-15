@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 import { EmailTemplateEntity } from './email-template.entity';
 
-@Entity('email_templates_locale')
+@Entity('email_templates_locales')
 @Unique(['locale', 'template'])
 export class EmailTemplateLocaleEntity {
   @PrimaryGeneratedColumn()
@@ -24,6 +24,7 @@ export class EmailTemplateLocaleEntity {
 
   @ManyToOne(() => EmailTemplateEntity, (template) => template.locales, {
     nullable: false,
+    onDelete: 'CASCADE',
   })
   template?: EmailTemplateEntity;
 }

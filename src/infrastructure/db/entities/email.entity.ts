@@ -9,7 +9,7 @@ import {
 import { EmailTemplateEntity } from './email-template.entity';
 import { EmailRecipientEntity } from './email-recipient.entity';
 
-@Entity('email')
+@Entity('emails')
 export class EmailEntity {
   @PrimaryGeneratedColumn()
   id: number;
@@ -32,6 +32,6 @@ export class EmailEntity {
   @Column({ nullable: true })
   error: string | null;
 
-  @ManyToOne(() => EmailTemplateEntity, { nullable: false })
+  @ManyToOne(() => EmailTemplateEntity, { nullable: false, cascade: true })
   template: EmailTemplateEntity;
 }

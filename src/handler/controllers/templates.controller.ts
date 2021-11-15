@@ -9,6 +9,7 @@ import {
   Body,
   Patch,
   Delete,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { HasRole } from '../decorators/has-role.decorator';
 import {
@@ -26,6 +27,9 @@ import {
 import { NameDto } from '../dtos/name.dto';
 import { EmailTemplateLocaleDto } from '../dtos/email-template-locale.dto';
 import { ApiOkResponse } from '@nestjs/swagger/dist/decorators/api-response.decorator';
+import { ParseIntPipeOrDefault } from 'src/handler/pipes/ParseIntPipeOrDefault';
+import { ParseLocalePipe } from 'src/handler/pipes/ParseLocalePipe';
+import { EmailTemplateNewDto } from 'src/handler/dtos/email-template-new.dto';
 
 @Controller('templates')
 @ApiTags('templates')
@@ -40,8 +44,8 @@ export class TemplatesController {
   @ApiQuery({ name: 'limit', required: false })
   @ApiQuery({ name: 'page', required: false })
   async getAllTemplates(
-    @Query('limit') limit: number = 10,
-    @Query('page') page: number = 0,
+    @Query('limit', new ParseIntPipeOrDefault({ def: 10 })) limit: number,
+    @Query('page', new ParseIntPipeOrDefault({ def: 0 })) page: number,
   ): Promise<ItemsWithTotalResponseDto<EmailTemplateDto>> {
     const templates = await this.emailTemplateService.findAllTemplates(
       {},
@@ -59,7 +63,7 @@ export class TemplatesController {
   @ApiOkResponse({ type: EmailTemplateDto })
   @ApiNotFoundResponse({ description: 'Template does not exist' })
   async findOneById(
-    @Param('templateId') templateId: number,
+    @Param('templateId', ParseIntPipe) templateId: number,
   ): Promise<EmailTemplateDto> {
     const emailTemplate = await this.emailTemplateService.getById(templateId);
     if (emailTemplate) {
@@ -70,7 +74,9 @@ export class TemplatesController {
 
   @Post()
   @HasRole('ADMIN')
-  async addTemplate(@Body() emailTemplateDto: EmailTemplateDto): Promise<void> {
+  async addTemplate(
+    @Body() emailTemplateDto: EmailTemplateNewDto,
+  ): Promise<void> {
     return this.emailTemplateService.addTemplate(emailTemplateDto);
   }
 
@@ -78,11 +84,11 @@ export class TemplatesController {
   @HasRole('ADMIN')
   @ApiCreatedResponse({ description: 'Template has been updated' })
   @ApiNotFoundResponse({ description: 'Template does not exist' })
-  async updateTemplate(
-    @Param('templateId') templateId: number,
+  async updateTemplateName(
+    @Param('templateId', ParseIntPipe) templateId: number,
     @Body() nameDto: NameDto,
   ): Promise<void> {
-    const template = await this.findOneById(templateId);
+    const template = await this.emailTemplateService.getById(templateId);
     if (!template) {
       throw new NotFoundException('Template does not exists');
     }
@@ -92,12 +98,12 @@ export class TemplatesController {
 
   @Patch(':templateId/locale')
   @HasRole('ADMIN')
-  @ApiCreatedResponse({ description: 'Template locale has been updated' })
-  async updateTemplateLocale(
-    @Param('templateId') templateId: number,
+  @ApiCreatedResponse({ description: 'Template locale has been set' })
+  async setTemplateLocale(
+    @Param('templateId', ParseIntPipe) templateId: number,
     @Body() templateLocaleDto: EmailTemplateLocaleDto,
   ): Promise<void> {
-    return this.emailTemplateService.saveTemplateLocale(
+    await this.emailTemplateService.saveTemplateLocale(
       templateId,
       templateLocaleDto,
     );
@@ -106,7 +112,9 @@ export class TemplatesController {
   @Delete(':templateId')
   @HasRole('ADMIN')
   @ApiCreatedResponse({ description: 'Template has been deleted' })
-  async deleteTemplate(@Param('templateId') templateId: number): Promise<void> {
+  async deleteTemplate(
+    @Param('templateId', ParseIntPipe) templateId: number,
+  ): Promise<void> {
     return this.emailTemplateService.deleteTemplateById(templateId);
   }
 
@@ -114,8 +122,8 @@ export class TemplatesController {
   @HasRole('ADMIN')
   @ApiCreatedResponse({ description: 'Template locale has been updated' })
   async deleteTemplateLocale(
-    @Param('templateId') templateId: number,
-    @Param('locale') locale: string,
+    @Param('templateId', ParseIntPipe) templateId: number,
+    @Param('locale', ParseLocalePipe) locale: string,
   ): Promise<void> {
     return this.emailTemplateService.deleteTemplateLocaleById(
       templateId,

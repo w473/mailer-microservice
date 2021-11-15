@@ -1,24 +1,11 @@
-import {
-  EmailTemplateLocaleDto,
-  fromEmailTemplateLocaleEntities,
-} from './email-template-locale.dto';
+import { fromEmailTemplateLocaleEntities } from './email-template-locale.dto';
 import { EmailTemplateEntity } from '../../infrastructure/db/entities/email-template.entity';
-import { Length, ValidateNested } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
+import { EmailTemplateNewDto } from 'src/handler/dtos/email-template-new.dto';
 
-export class EmailTemplateDto {
+export class EmailTemplateDto extends EmailTemplateNewDto {
   @ApiProperty()
   id?: number;
-
-  @ApiProperty()
-  @Length(5, 256)
-  name?: string;
-
-  @ApiProperty({ type: [EmailTemplateLocaleDto] })
-  @ValidateNested()
-  @Type(() => EmailTemplateLocaleDto)
-  locales?: EmailTemplateLocaleDto[];
 }
 
 export const fromEmailTemplateEntity = (

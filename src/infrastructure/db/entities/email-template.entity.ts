@@ -16,6 +16,8 @@ export class EmailTemplateEntity {
   @Column()
   name?: string;
 
-  @OneToMany(() => EmailTemplateLocaleEntity, (locale) => locale.template)
+  @OneToMany(() => EmailTemplateLocaleEntity, (locale) => locale.template, {
+    cascade: true,
+  })
   locales?: EmailTemplateLocaleEntity[];
 }

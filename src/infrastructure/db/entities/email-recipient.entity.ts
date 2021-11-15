@@ -1,13 +1,14 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { EmailEntity } from './email.entity';
 
-@Entity('email_recipient')
+@Entity('emails_recipients')
 export class EmailRecipientEntity {
   @PrimaryGeneratedColumn()
   id?: number;
 
   @ManyToOne(() => EmailEntity, (email) => email.recipients, {
     nullable: false,
+    cascade: true,
   })
   email?: EmailEntity;
 
