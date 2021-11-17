@@ -23,5 +23,5 @@ export class EmailSendRequestDto {
   @ApiProperty()
   @ValidateNested()
   @Type(() => VariablesDto)
-  variables: VariablesDto[];
+  variables: Record<string, string>;
 }

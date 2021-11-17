@@ -6,11 +6,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 export class EmailSendService {
+  transporter: Transporter<SMTPTransport.SentMessageInfo>;
+
   constructor(
     private configService: ConfigService,
     @InjectRepository(EmailEntity)
     private emailRepository: Repository<EmailEntity>,
-  ) {}
+  ) {
+    this.transporter = this.getTransporter();
+  }
 
   private getTransporter(): Transporter<SMTPTransport.SentMessageInfo> {
     return createTransport({
@@ -24,21 +28,19 @@ export class EmailSendService {
     });
   }
 
-  async sendEmail(emailId: number): Promise<void> {
-    console.log(emailId);
+  async sendEmailById(emailId: number): Promise<void> {
     const email = await this.emailRepository.findOne(emailId, {
       relations: ['recipients'],
     });
     if (!email) {
       throw new Error('Email has not been found');
     }
-    const transporter = this.getTransporter();
     const fromName = this.configService.get('EMAIL_FROM_NAME');
     const fromEmail = this.configService.get('EMAIL_FROM_EMAIL');
     const promises = new Array<Promise<SMTPTransport.SentMessageInfo>>();
     email.recipients.forEach((recipient) => {
       promises.push(
-        transporter.sendMail({
+        this.transporter.sendMail({
           from: `${fromName} <${fromEmail}>`,
           to: `${recipient.name} <${recipient.emailAddress}> `,
           subject: email.subject,

@@ -10,7 +10,7 @@ export class EmailQueueConsumer {
   @Process(EMAIL_SEND_QUEUE)
   async sendEmail(job: Job<{ emailId: number }>) {
     try {
-      await this.emailSendService.sendEmail(job.data.emailId);
+      await this.emailSendService.sendEmailById(job.data.emailId);
     } catch (error) {
       console.log(error);
     }
