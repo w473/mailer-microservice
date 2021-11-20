@@ -21,4 +21,10 @@ module.exports = {
   },
   roots: ['<rootDir>'],
   modulePaths: ['<rootDir>'],
+  globals: {
+    'ts-jest': {
+      compiler: 'ttypescript',
+    },
+  },
+  setupFiles: ['<rootDir>test.config.ts'],
 };

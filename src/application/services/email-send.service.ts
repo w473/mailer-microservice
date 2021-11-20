@@ -8,8 +8,8 @@ import { EmailRepositoryInterface } from 'src/domain/repositories/email.reposito
 export const EMAIL_TRANSPORTER = 'EMAIL_TRANSPORTER';
 
 export class EmailSendService {
-  fromName: string;
-  fromEmail: string;
+  private readonly fromName: string;
+  private readonly fromEmail: string;
 
   constructor(
     @Inject(EMAIL_TRANSPORTER)
