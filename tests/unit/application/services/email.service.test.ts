@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { EmailService } from 'src/application/services/email.service';
-import { getRepositoryToken } from '@nestjs/typeorm';
 import { EmailTemplateEntity } from 'src/infrastructure/db/entities/email-template.entity';
 import { EmailEntity } from 'src/infrastructure/db/entities/email.entity';
 import { getQueueToken } from '@nestjs/bull';
@@ -8,6 +7,7 @@ import { ConfigService } from '@nestjs/config';
 import { EmailSendRequestDto } from 'src/handler/dtos/email-send-request.dto';
 import { EMAIL_SEND_QUEUE } from 'src/handler/consumers/email-queue.consumer';
 import { DomainException } from 'src/domain/exceptions/domain.exception';
+import { EmailTemplateRepositoryInterface } from 'src/domain/repositories/email-template.repository.interface';
 
 describe('EmailService', () => {
   let emailService: EmailService;
@@ -68,11 +68,11 @@ describe('EmailService', () => {
       providers: [
         EmailService,
         {
-          provide: getRepositoryToken(EmailTemplateEntity),
+          provide: 'EmailTemplateRepositoryInterface',
           useValue: emailTemplateRepositoryMock,
         },
         {
-          provide: getRepositoryToken(EmailEntity),
+          provide: 'EmailRepositoryInterface',
           useValue: emailRepositoryMock,
         },
         {
@@ -107,8 +107,8 @@ describe('EmailService', () => {
 
       expect(emailRepositoryMock.findAndCount).toBeCalledWith({
         where: {},
-        skip: 60,
-        take: 20,
+        limit: 20,
+        page: 3,
       });
     });
 
@@ -119,8 +119,8 @@ describe('EmailService', () => {
 
       expect(emailRepositoryMock.findAndCount).toBeCalledWith({
         where: {},
-        skip: 0,
-        take: 10,
+        page: 0,
+        limit: 10,
       });
     });
   });

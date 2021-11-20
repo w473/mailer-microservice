@@ -1,6 +1,4 @@
-import { Repository } from 'typeorm';
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { Inject, Injectable } from '@nestjs/common';
 import Handlebars = require('handlebars');
 import { EmailTemplateEntity } from '../../infrastructure/db/entities/email-template.entity';
 import { EmailSendRequestDto } from '../../handler/dtos/email-send-request.dto';
@@ -14,15 +12,15 @@ import { EMAIL_SEND_QUEUE } from 'src/handler/consumers/email-queue.consumer';
 import { EmailTemplateRepositoryInterface } from 'src/domain/repositories/email-template.repository.interface';
 import { EmailTemplateLocaleEntity } from 'src/infrastructure/db/entities/email-template-locale.entity';
 import { RecipientDto } from 'src/handler/dtos/recipient.dto';
+import { EmailRepositoryInterface } from 'src/domain/repositories/email.repository.interface';
 
 @Injectable()
 export class EmailService {
   constructor(
-    @InjectRepository(EmailTemplateEntity)
+    @Inject('EmailTemplateRepositoryInterface')
     private emailTemplateRepository: EmailTemplateRepositoryInterface,
-
-    @InjectRepository(EmailEntity)
-    private emailRepository: Repository<EmailEntity>,
+    @Inject('EmailRepositoryInterface')
+    private emailRepository: EmailRepositoryInterface,
     private configService: ConfigService,
     @InjectQueue('emails') private emailsQueue: Queue,
   ) {
@@ -117,9 +115,9 @@ export class EmailService {
     page = 0,
   ): Promise<[EmailEntity[], number]> {
     return this.emailRepository.findAndCount({
-      where: where,
-      skip: page * limit,
-      take: limit,
+      where,
+      limit,
+      page,
     });
   }
 }

@@ -29,6 +29,7 @@ describe('EmailSendService', () => {
   beforeEach(async () => {
     global.Date = MockDate as unknown as typeof Date;
     emailRepositoryMock = {
+      findAndCount: jest.fn(),
       findOne: jest.fn(),
       save: jest.fn(),
     };

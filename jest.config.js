@@ -6,7 +6,11 @@ module.exports = {
   },
   coverageDirectory: 'coverage',
   collectCoverageFrom: ['src/**/*.ts', '!**/bin/**', '!**/src/types/**'],
-  coveragePathIgnorePatterns: ['src/main.ts'],
+  coveragePathIgnorePatterns: [
+    'src/main.ts',
+    'src/app.module.ts',
+    'src/infrastructure/db/migrations/*',
+  ],
   testEnvironment: 'node',
   coverageThreshold: {
     global: {

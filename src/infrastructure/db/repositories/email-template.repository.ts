@@ -1,8 +1,9 @@
 import { EmailTemplateEntity } from 'src/infrastructure/db/entities/email-template.entity';
-import { Repository } from 'typeorm';
+import { QueryFailedError, Repository } from 'typeorm';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { EmailTemplateRepositoryInterface } from 'src/domain/repositories/email-template.repository.interface';
 import { InjectRepository } from '@nestjs/typeorm';
+import { DuplicateException } from 'src/domain/exceptions/duplicate.exception';
 
 @Injectable()
 export class EmailTemplateRepository
@@ -34,5 +35,48 @@ export class EmailTemplateRepository
       );
     }
     return template;
+  }
+
+  async findAndCount({
+    where,
+    limit,
+    page,
+  }: {
+    where: any;
+    limit: number;
+    page: number;
+  }): Promise<[EmailTemplateEntity[], number]> {
+    return this.emailTemplateRepository.findAndCount({
+      where,
+      skip: limit * page,
+      take: limit,
+      relations: ['locales'],
+    });
+  }
+
+  async findOne(templateId: number): Promise<EmailTemplateEntity> {
+    return this.emailTemplateRepository.findOne(templateId, {
+      relations: ['locales'],
+    });
+  }
+
+  async save(
+    emailTemplateEntity: EmailTemplateEntity,
+  ): Promise<EmailTemplateEntity> {
+    try {
+      return this.emailTemplateRepository.save(emailTemplateEntity);
+    } catch (error) {
+      if (
+        error instanceof QueryFailedError &&
+        error.driverError.code === '23505'
+      ) {
+        throw new DuplicateException("You can't use this template name");
+      }
+      throw error;
+    }
+  }
+
+  async remove(emailTemplateEntity: EmailTemplateEntity): Promise<void> {
+    await this.emailTemplateRepository.remove(emailTemplateEntity);
   }
 }

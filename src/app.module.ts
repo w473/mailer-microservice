@@ -25,6 +25,7 @@ import {
 import { createTransport } from 'nodemailer';
 import { EmailTemplateRepository } from 'src/infrastructure/db/repositories/email-template.repository';
 import { EmailRepository } from 'src/infrastructure/db/repositories/email.repository';
+import { EmailTemplateLocaleRepository } from 'src/infrastructure/db/repositories/email-template-locale.repository';
 
 @Module({
   imports: [
@@ -55,6 +56,8 @@ import { EmailRepository } from 'src/infrastructure/db/repositories/email.reposi
   providers: [
     EmailService,
     EmailTemplateService,
+    EmailQueueConsumer,
+    EmailSendService,
     {
       provide: APP_GUARD,
       useClass: AuthGuard,
@@ -78,13 +81,18 @@ import { EmailRepository } from 'src/infrastructure/db/repositories/email.reposi
       },
       inject: [ConfigService],
     },
-    EmailQueueConsumer,
-    EmailSendService,
     {
       provide: 'EmailRepositoryInterface',
       useClass: EmailRepository,
     },
-    EmailTemplateRepository,
+    {
+      provide: 'EmailTemplateRepositoryInterface',
+      useClass: EmailTemplateRepository,
+    },
+    {
+      provide: 'EmailTemplateLocaleRepositoryInterface',
+      useClass: EmailTemplateLocaleRepository,
+    },
   ],
 })
 export class AppModule implements NestModule {

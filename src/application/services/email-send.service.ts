@@ -49,7 +49,6 @@ export class EmailSendService {
         }
       });
       if (errors.length > 0) {
-        // console.log(JSON.stringify(errors), 'eeeeee');
         throw new Error(JSON.stringify(errors));
       }
 

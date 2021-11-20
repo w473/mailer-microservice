@@ -20,4 +20,20 @@ export class EmailRepository implements EmailRepositoryInterface {
   async save(email: EmailEntity): Promise<void> {
     await this.emailRepository.save(email);
   }
+
+  async findAndCount({
+    where,
+    limit,
+    page,
+  }: {
+    where: any;
+    limit: number;
+    page: number;
+  }): Promise<[EmailEntity[], number]> {
+    return this.emailRepository.findAndCount({
+      where,
+      skip: limit * page,
+      take: limit,
+    });
+  }
 }
