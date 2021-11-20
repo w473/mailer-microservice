@@ -18,7 +18,13 @@ import { AuthGuard } from 'src/handler/auth/auth.guard';
 import { BullModule } from '@nestjs/bull';
 import { ConfigService } from '@nestjs/config';
 import { EmailQueueConsumer } from 'src/handler/consumers/email-queue.consumer';
-import { EmailSendService } from 'src/application/services/email-send.service';
+import {
+  EMAIL_TRANSPORTER,
+  EmailSendService,
+} from 'src/application/services/email-send.service';
+import { createTransport } from 'nodemailer';
+import { EmailTemplateRepository } from 'src/infrastructure/db/repositories/email-template.repository';
+import { EmailRepository } from 'src/infrastructure/db/repositories/email.repository';
 
 @Module({
   imports: [
@@ -57,8 +63,28 @@ import { EmailSendService } from 'src/application/services/email-send.service';
       provide: APP_GUARD,
       useClass: RolesGuard,
     },
+    {
+      provide: EMAIL_TRANSPORTER,
+      useFactory: (configService: ConfigService) => {
+        return createTransport({
+          host: configService.get('EMAIL_SERVICE_HOST'),
+          port: Number.parseInt(configService.get('EMAIL_SERVICE_PORT'), 10),
+          secure: configService.get('EMAIL_SERVICE_PORT') === '465',
+          auth: {
+            user: configService.get('EMAIL_SERVICE_USER'),
+            pass: configService.get('EMAIL_SERVICE_PASS'),
+          },
+        });
+      },
+      inject: [ConfigService],
+    },
     EmailQueueConsumer,
     EmailSendService,
+    {
+      provide: 'EmailRepositoryInterface',
+      useClass: EmailRepository,
+    },
+    EmailTemplateRepository,
   ],
 })
 export class AppModule implements NestModule {
