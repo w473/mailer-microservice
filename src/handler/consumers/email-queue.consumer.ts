@@ -6,10 +6,9 @@ export const EMAIL_SEND_QUEUE = 'sendEmail';
 
 @Processor('emails')
 export class EmailQueueConsumer {
-  constructor(
-    private readonly emailSendService: EmailSendService,
-    private readonly logger: Logger,
-  ) {}
+  private readonly logger = new Logger(EmailQueueConsumer.name);
+
+  constructor(private readonly emailSendService: EmailSendService) {}
 
   @Process(EMAIL_SEND_QUEUE)
   async sendEmail(job: Job<{ emailId: number }>) {

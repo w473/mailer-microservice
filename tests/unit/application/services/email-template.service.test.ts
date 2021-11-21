@@ -1,43 +1,15 @@
-import { EmailTemplateEntity } from 'src/infrastructure/db/entities/email-template.entity';
 import { Test, TestingModule } from '@nestjs/testing';
 import { EmailTemplateService } from 'src/application/services/email-template.service';
 import { EmailTemplateRepositoryInterface } from 'src/domain/repositories/email-template.repository.interface';
 import { EmailTemplateLocaleRepositoryInterface } from 'src/domain/repositories/email-template-locale.repository.interface';
-import { EmailTemplateDto } from 'src/handler/dtos/email-template.dto';
 import { DomainException } from 'src/domain/exceptions/domain.exception';
+import {
+  emailTemplateDto,
+  emailTemplateEntity,
+} from '../../../__mockdata__/templates';
 
 describe('EmailTemplateService', () => {
   let emailTemplateService: EmailTemplateService;
-
-  const emailTemplateEntity: EmailTemplateEntity = {
-    id: 666,
-    name: 'some name',
-    locales: [
-      {
-        id: 555,
-        locale: 'pl_PL',
-        subject: 'some Subject {{variableUno}}',
-        contents: 'some Contents',
-      },
-      {
-        id: 999,
-        locale: 'en_US',
-        subject: 'some eeee {{variableUno}}',
-        contents: 'some uuu',
-      },
-    ],
-  };
-
-  const emailTemplateDto: EmailTemplateDto = {
-    name: 'potato',
-    locales: [
-      {
-        locale: 'pl_PL',
-        subject: 'some subject',
-        contents: 'some contents',
-      },
-    ],
-  };
 
   const emailTemplateRepositoryMock: EmailTemplateRepositoryInterface = {
     getTemplateByNameAndLocale: jest.fn(),

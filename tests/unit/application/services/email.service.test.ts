@@ -1,48 +1,21 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { EmailService } from 'src/application/services/email.service';
-import { EmailTemplateEntity } from 'src/infrastructure/db/entities/email-template.entity';
 import { EmailEntity } from 'src/infrastructure/db/entities/email.entity';
 import { getQueueToken } from '@nestjs/bull';
 import { ConfigService } from '@nestjs/config';
-import { EmailSendRequestDto } from 'src/handler/dtos/email-send-request.dto';
 import { EMAIL_SEND_QUEUE } from 'src/handler/consumers/email-queue.consumer';
 import { DomainException } from 'src/domain/exceptions/domain.exception';
 import { EmailTemplateRepositoryInterface } from 'src/domain/repositories/email-template.repository.interface';
+import {
+  emailEntity,
+  emailEntity2,
+  emailSendRequestDto,
+} from '../../../__mockdata__/emails';
+import { emailTemplateEntity } from '../../../__mockdata__/templates';
 
 describe('EmailService', () => {
   let emailService: EmailService;
   let configService: ConfigService;
-  const emailSendRequestDto: EmailSendRequestDto = {
-    templateName: 'potato',
-    locale: 'pl_PL',
-    recipient: {
-      userId: '5ebd704d-28a9-4dcc-8fa3-c350137aab38',
-      email: 'some@email.de',
-      name: 'tomato',
-    },
-    variables: {
-      variableUno: 'pott',
-    },
-  };
-
-  const emailTemplateEntity: EmailTemplateEntity = {
-    id: 666,
-    name: emailSendRequestDto.templateName,
-    locales: [
-      {
-        id: 555,
-        locale: 'pl_PL',
-        subject: 'some Subject {{variableUno}}',
-        contents: 'some Contents',
-      },
-      {
-        id: 999,
-        locale: 'en_US',
-        subject: 'some eeee {{variableUno}}',
-        contents: 'some uuu',
-      },
-    ],
-  };
 
   const fallBackLocale = 'en_US';
 
@@ -143,20 +116,6 @@ describe('EmailService', () => {
         fallBackLocale,
       );
 
-      const emailEntity = {
-        contents: 'some Contents',
-        id: 123,
-        recipients: [
-          {
-            email: null,
-            emailAddress: 'some@email.de',
-            name: 'tomato',
-            userId: '5ebd704d-28a9-4dcc-8fa3-c350137aab38',
-          },
-        ],
-        subject: 'some Subject pott',
-        template: emailTemplateEntity,
-      };
       emailEntity.recipients[0].email = emailEntity;
       expect(emailRepositoryMock.save).toBeCalledWith(emailEntity);
 
@@ -188,22 +147,8 @@ describe('EmailService', () => {
         fallBackLocale,
       );
 
-      const emailEntity = {
-        contents: 'some uuu',
-        id: 123,
-        recipients: [
-          {
-            email: null,
-            emailAddress: 'some@email.de',
-            name: 'tomato',
-            userId: '5ebd704d-28a9-4dcc-8fa3-c350137aab38',
-          },
-        ],
-        subject: 'some eeee pott',
-        template: emailTemplateEntity,
-      };
-      emailEntity.recipients[0].email = emailEntity;
-      expect(emailRepositoryMock.save).toBeCalledWith(emailEntity);
+      emailEntity2.recipients[0].email = emailEntity2;
+      expect(emailRepositoryMock.save).toBeCalledWith(emailEntity2);
 
       expect(emailsQueueMock.add).toBeCalledWith(
         EMAIL_SEND_QUEUE,

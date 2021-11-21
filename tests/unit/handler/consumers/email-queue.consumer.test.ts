@@ -12,6 +12,8 @@ describe('EmailQueueConsumer test', () => {
   };
   const loggerMock = {
     warn: jest.fn(),
+    log: jest.fn(),
+    error: jest.fn(),
   };
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -21,12 +23,10 @@ describe('EmailQueueConsumer test', () => {
           provide: EmailSendService,
           useValue: emailSendServiceMock,
         },
-        {
-          provide: Logger,
-          useValue: loggerMock,
-        },
       ],
     }).compile();
+
+    module.useLogger(loggerMock);
 
     emailQueueConsumer = await module.get(EmailQueueConsumer);
   });
@@ -54,7 +54,7 @@ describe('EmailQueueConsumer test', () => {
       });
       await emailQueueConsumer.sendEmail(job);
       expect(emailSendServiceMock.sendEmailById).toBeCalledWith(emailId);
-      expect(loggerMock.warn).toBeCalledWith(error);
+      expect(loggerMock.warn).toBeCalledWith(error, 'EmailQueueConsumer');
     });
   });
 });

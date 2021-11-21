@@ -1,23 +1,12 @@
 import { NestFactory } from '@nestjs/core';
-import { Module, ValidationPipe } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { AppModule } from './app.module';
 import { ErrorsInterceptor } from './handler/interceptors/errors.interceptor';
-import { DatabaseModule } from './infrastructure/db/database.module';
+import { MainModule } from 'src/main.module';
 
 async function bootstrap() {
-  @Module({
-    imports: [
-      ConfigModule.forRoot({
-        isGlobal: true,
-      }),
-      DatabaseModule,
-      AppModule,
-    ],
-  })
-  class Mdl {}
-  const app = await NestFactory.create(Mdl);
+  const app = await NestFactory.create(MainModule);
   const configService = app.get(ConfigService);
   app.useGlobalPipes(
     new ValidationPipe({
