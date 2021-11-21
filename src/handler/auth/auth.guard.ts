@@ -1,6 +1,7 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { KeycloakJwtToken } from './models/keycloak.jwt.token';
+import { getUserFromKeycloakJwtToken } from 'src/handler/auth/models/user';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -17,11 +18,10 @@ export class AuthGuard implements CanActivate {
         ?.replace('Bearer ', '')
         ?.split('.')[1];
       if (bearer) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const jwt = <KeycloakJwtToken>(
           JSON.parse(Buffer.from(bearer, 'base64').toString())
         );
-        request.user = jwt;
+        request.user = getUserFromKeycloakJwtToken(jwt);
         return true;
       }
       return false;

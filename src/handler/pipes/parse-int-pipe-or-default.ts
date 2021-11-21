@@ -16,7 +16,7 @@ export class ParseIntPipeOrDefault extends ParseIntPipe {
     value: string,
     metadata: ArgumentMetadata,
   ): Promise<number | null> {
-    if (value.length === 0) {
+    if (!value || value.length === 0) {
       return this.def;
     }
 

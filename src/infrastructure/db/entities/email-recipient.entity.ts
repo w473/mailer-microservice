@@ -10,7 +10,7 @@ export class EmailRecipientEntity {
     nullable: false,
     cascade: true,
   })
-  email?: EmailEntity;
+  email: EmailEntity;
 
   @Column({ type: 'uuid' })
   userId: string;

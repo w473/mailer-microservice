@@ -7,7 +7,7 @@ import { ItemsWithTotalResponseDto } from '../dtos/items-with-total-response.dto
 import { HasRole } from '../decorators/has-role.decorator';
 import { ApiCreatedResponse, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ApiOkResponse } from '@nestjs/swagger/dist/decorators/api-response.decorator';
-import { ParseIntPipeOrDefault } from 'src/handler/pipes/ParseIntPipeOrDefault';
+import { ParseIntPipeOrDefault } from 'src/handler/pipes/parse-int-pipe-or-default';
 
 @Controller()
 @ApiTags('emails')

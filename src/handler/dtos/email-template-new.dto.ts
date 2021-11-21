@@ -1,5 +1,5 @@
 import { EmailTemplateLocaleDto } from './email-template-locale.dto';
-import { Length, ValidateNested } from 'class-validator';
+import { Length, ValidateNested, IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 
@@ -10,6 +10,7 @@ export class EmailTemplateNewDto {
 
   @ApiProperty({ type: [EmailTemplateLocaleDto] })
   @ValidateNested()
+  @IsNotEmpty()
   @Type(() => EmailTemplateLocaleDto)
   locales?: EmailTemplateLocaleDto[];
 }

@@ -27,9 +27,10 @@ import {
 import { NameDto } from '../dtos/name.dto';
 import { EmailTemplateLocaleDto } from '../dtos/email-template-locale.dto';
 import { ApiOkResponse } from '@nestjs/swagger/dist/decorators/api-response.decorator';
-import { ParseIntPipeOrDefault } from 'src/handler/pipes/ParseIntPipeOrDefault';
-import { ParseLocalePipe } from 'src/handler/pipes/ParseLocalePipe';
+import { ParseIntPipeOrDefault } from 'src/handler/pipes/parse-int-pipe-or-default';
+import { ParseLocalePipe } from 'src/handler/pipes/parse-locale-pipe';
 import { EmailTemplateNewDto } from 'src/handler/dtos/email-template-new.dto';
+import { NotFoundException as LocalNotFoundException } from 'src/domain/exceptions/not-found.exception';
 
 @Controller('templates')
 @ApiTags('templates')
@@ -82,7 +83,7 @@ export class TemplatesController {
 
   @Patch(':templateId')
   @HasRole('ADMIN')
-  @ApiCreatedResponse({ description: 'Template has been updated' })
+  @ApiOkResponse({ description: 'Template has been updated' })
   @ApiNotFoundResponse({ description: 'Template does not exist' })
   async updateTemplateName(
     @Param('templateId', ParseIntPipe) templateId: number,
@@ -93,7 +94,7 @@ export class TemplatesController {
       throw new NotFoundException('Template does not exists');
     }
     template.name = nameDto.name;
-    return this.emailTemplateService.saveTemplate(template);
+    await this.emailTemplateService.saveTemplate(template);
   }
 
   @Patch(':templateId/locale')
@@ -103,8 +104,14 @@ export class TemplatesController {
     @Param('templateId', ParseIntPipe) templateId: number,
     @Body() templateLocaleDto: EmailTemplateLocaleDto,
   ): Promise<void> {
-    await this.emailTemplateService.saveTemplateLocale(
+    const emailTemplateEntity = await this.emailTemplateService.getById(
       templateId,
+    );
+    if (!emailTemplateEntity) {
+      throw new NotFoundException('Template does not exists');
+    }
+    await this.emailTemplateService.saveTemplateLocale(
+      emailTemplateEntity,
       templateLocaleDto,
     );
   }
@@ -115,7 +122,13 @@ export class TemplatesController {
   async deleteTemplate(
     @Param('templateId', ParseIntPipe) templateId: number,
   ): Promise<void> {
-    return this.emailTemplateService.deleteTemplateById(templateId);
+    const emailTemplateEntity = await this.emailTemplateService.getById(
+      templateId,
+    );
+    if (!emailTemplateEntity) {
+      throw new NotFoundException('Template does not exists');
+    }
+    return this.emailTemplateService.deleteTemplate(emailTemplateEntity);
   }
 
   @Delete(':templateId/:locale')
@@ -125,9 +138,22 @@ export class TemplatesController {
     @Param('templateId', ParseIntPipe) templateId: number,
     @Param('locale', ParseLocalePipe) locale: string,
   ): Promise<void> {
-    return this.emailTemplateService.deleteTemplateLocaleById(
+    const emailTemplateEntity = await this.emailTemplateService.getById(
       templateId,
-      locale,
     );
+    if (!emailTemplateEntity) {
+      throw new NotFoundException('Email template does not exists');
+    }
+    try {
+      return this.emailTemplateService.deleteTemplateLocale(
+        emailTemplateEntity,
+        locale,
+      );
+    } catch (error) {
+      if (error instanceof LocalNotFoundException) {
+        throw new NotFoundException(error.message);
+      }
+      throw error;
+    }
   }
 }

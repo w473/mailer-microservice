@@ -26,16 +26,31 @@ export class CustomTypeOrmLogger implements TypeOrmLoggerInterface {
     this.logger.debug('Executing query', { query, parameters });
   }
 
-  public logQueryError(error: string | Error, query: string, parameters?: unknown[]): void {
+  public logQueryError(
+    error: string | Error,
+    query: string,
+    parameters?: unknown[],
+  ): void {
     if (typeof error === 'string') {
-      this.logger.warn('Error while executing query', { query, parameters, error });
+      this.logger.warn('Error while executing query', {
+        query,
+        parameters,
+        error,
+      });
     } else {
-      this.logger
-        .warn('Error while executing query', { query, parameters, error });
+      this.logger.warn('Error while executing query', {
+        query,
+        parameters,
+        error,
+      });
     }
   }
 
-  public logQuerySlow(time: number, query: string, parameters?: unknown[]): void {
+  public logQuerySlow(
+    time: number,
+    query: string,
+    parameters?: unknown[],
+  ): void {
     this.logger.warn('Slow query detected', { query, time, parameters });
   }
 
@@ -49,7 +64,6 @@ export class CustomTypeOrmLogger implements TypeOrmLoggerInterface {
 
   public log(level: TypeOrmLogLevel, message: unknown): void {
     const severity = this.getSeverity(level);
-    console.log(severity);
     let msg = '';
     let optional: any = null;
     if (typeof message === 'string') {
@@ -59,7 +73,7 @@ export class CustomTypeOrmLogger implements TypeOrmLoggerInterface {
       optional = message;
     } else {
       msg = `${JSON.stringify(message)}`;
-      optional = (message as Record<string, any>);
+      optional = message as Record<string, any>;
     }
     switch (severity) {
       case LogLevel.DEBUG:

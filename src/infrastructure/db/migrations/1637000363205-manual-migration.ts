@@ -4,7 +4,7 @@ export class manualMigration1637000363205 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       `
-      INSERT INTO email_templates (name) VALUES ('New user'),('User email changed activate');
+      INSERT INTO email_templates (id, name) VALUES (1, 'New user'),(2, 'User email changed activate');
 
       INSERT INTO email_templates_locales (locale, subject, contents, template_id) 
       VALUES
