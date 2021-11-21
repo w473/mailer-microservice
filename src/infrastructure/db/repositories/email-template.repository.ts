@@ -64,7 +64,7 @@ export class EmailTemplateRepository
     emailTemplateEntity: EmailTemplateEntity,
   ): Promise<EmailTemplateEntity> {
     try {
-      return this.emailTemplateRepository.save(emailTemplateEntity);
+      return await this.emailTemplateRepository.save(emailTemplateEntity);
     } catch (error) {
       if (
         error instanceof QueryFailedError &&
