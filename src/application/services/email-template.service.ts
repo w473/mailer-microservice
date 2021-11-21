@@ -6,14 +6,15 @@ import { EmailTemplateLocaleEntity } from 'src/infrastructure/db/entities/email-
 import { EmailTemplateNewDto } from 'src/handler/dtos/email-template-new.dto';
 import { EmailTemplateRepositoryInterface } from 'src/domain/repositories/email-template.repository.interface';
 import { EmailTemplateLocaleRepositoryInterface } from 'src/domain/repositories/email-template-locale.repository.interface';
+import { NotFoundException } from 'src/domain/exceptions/not-found.exception';
 
 @Injectable()
 export class EmailTemplateService {
   constructor(
     @Inject('EmailTemplateRepositoryInterface')
-    private emailTemplateRepository: EmailTemplateRepositoryInterface,
+    private readonly emailTemplateRepository: EmailTemplateRepositoryInterface,
     @Inject('EmailTemplateLocaleRepositoryInterface')
-    private emailTemplateLocaleRepository: EmailTemplateLocaleRepositoryInterface,
+    private readonly emailTemplateLocaleRepository: EmailTemplateLocaleRepositoryInterface,
   ) {}
 
   async findAllTemplates(
@@ -51,14 +52,9 @@ export class EmailTemplateService {
   }
 
   async saveTemplateLocale(
-    templateId: number,
+    emailTemplateEntity: EmailTemplateEntity,
     emailTemplateLocaleDto: EmailTemplateLocaleDto,
   ): Promise<void> {
-    const emailTemplateEntity = await this.getById(templateId);
-    if (!emailTemplateEntity) {
-      throw new DomainException('Email template does not exists');
-    }
-
     let emailTemplateLocaleEntity = emailTemplateEntity.locales.find(
       (localeEntity) => localeEntity.locale === emailTemplateLocaleDto.locale,
     );
@@ -73,28 +69,22 @@ export class EmailTemplateService {
     await this.emailTemplateLocaleRepository.save(emailTemplateLocaleEntity);
   }
 
-  async deleteTemplateById(templateId: number): Promise<void> {
-    const emailTemplateEntity = await this.getById(templateId);
-    if (!emailTemplateEntity) {
-      throw new DomainException('Email template does not exists');
-    }
+  async deleteTemplate(
+    emailTemplateEntity: EmailTemplateEntity,
+  ): Promise<void> {
     await this.emailTemplateRepository.remove(emailTemplateEntity);
   }
 
-  async deleteTemplateLocaleById(
-    templateId: number,
+  async deleteTemplateLocale(
+    emailTemplateEntity: EmailTemplateEntity,
     locale: string,
   ): Promise<void> {
-    const emailTemplateEntity = await this.getById(templateId);
-    if (!emailTemplateEntity) {
-      throw new DomainException('Email template does not exists');
-    }
     const localeEntity = emailTemplateEntity.locales.find(
       (localeEntity) => localeEntity.locale === locale,
     );
 
     if (!localeEntity) {
-      throw new DomainException('Email template locale does not exists');
+      throw new NotFoundException('Template locale does not exists');
     }
     await this.emailTemplateLocaleRepository.remove(localeEntity);
   }

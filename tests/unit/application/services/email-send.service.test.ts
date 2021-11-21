@@ -24,8 +24,6 @@ describe('EmailSendService', () => {
 
   let transporter: { sendMail };
 
-  const RealDate = Date;
-
   beforeEach(async () => {
     global.Date = MockDate as unknown as typeof Date;
     emailRepositoryMock = {

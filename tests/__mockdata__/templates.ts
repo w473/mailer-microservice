@@ -26,7 +26,7 @@ export const emailTemplateDto: EmailTemplateDto = {
     {
       locale: 'pl_PL',
       subject: 'some subject',
-      contents: 'some contents',
+      contents: 'some contents some contents some contents some contents',
     },
   ],
 };
