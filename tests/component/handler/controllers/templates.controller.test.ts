@@ -361,6 +361,18 @@ describe('Templates', () => {
         });
     });
 
+    it(`DELETE template locale 500`, () => {
+      emailTemplateServiceMock.getById.mockResolvedValue(emailTemplateEntity);
+      emailTemplateServiceMock.deleteTemplateLocale.mockImplementation(() => {
+        throw new Error();
+      });
+      return request
+        .delete('/templates/666/er_DE')
+        .auth(tokenAdminRole, { type: 'bearer' })
+        .expect(500)
+        .expect({ statusCode: 500, message: 'Internal server error' });
+    });
+
     it(`DELETE template OK`, () => {
       emailTemplateServiceMock.getById.mockResolvedValue(emailTemplateEntity);
       return request

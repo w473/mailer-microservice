@@ -27,6 +27,8 @@ export const emailEntity = {
   ],
   subject: 'some Subject pott',
   template: emailTemplateEntity,
+  sent: null,
+  error: null,
 };
 
 export const emailEntity2 = {

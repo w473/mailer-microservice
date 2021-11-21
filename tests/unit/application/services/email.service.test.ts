@@ -117,6 +117,8 @@ describe('EmailService', () => {
       );
 
       emailEntity.recipients[0].email = emailEntity;
+      emailEntity.error = undefined;
+      emailEntity.sent = undefined;
       expect(emailRepositoryMock.save).toBeCalledWith(emailEntity);
 
       expect(emailsQueueMock.add).toBeCalledWith(

@@ -27,8 +27,8 @@ import {
 import { NameDto } from '../dtos/name.dto';
 import { EmailTemplateLocaleDto } from '../dtos/email-template-locale.dto';
 import { ApiOkResponse } from '@nestjs/swagger/dist/decorators/api-response.decorator';
-import { ParseIntPipeOrDefault } from 'src/handler/pipes/ParseIntPipeOrDefault';
-import { ParseLocalePipe } from 'src/handler/pipes/ParseLocalePipe';
+import { ParseIntPipeOrDefault } from 'src/handler/pipes/parse-int-pipe-or-default';
+import { ParseLocalePipe } from 'src/handler/pipes/parse-locale-pipe';
 import { EmailTemplateNewDto } from 'src/handler/dtos/email-template-new.dto';
 import { NotFoundException as LocalNotFoundException } from 'src/domain/exceptions/not-found.exception';
 
