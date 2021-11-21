@@ -13,6 +13,7 @@ describe('Templates', () => {
   let request: Request.SuperTest<Request.Test>;
   const emailTemplateServiceMock = {
     findAllTemplates: jest.fn(),
+    getById: jest.fn(),
   };
 
   beforeAll(async () => {
@@ -89,6 +90,44 @@ describe('Templates', () => {
         statusCode: 403,
         message: 'Forbidden resource',
         error: 'Forbidden',
+      });
+  });
+
+  it(`/GET template not found`, () => {
+    return request
+      .get('/templates/666')
+      .auth(tokenAdminRole, { type: 'bearer' })
+      .expect(404)
+      .expect({
+        statusCode: 404,
+        message: 'Template does not exist',
+        error: 'Not Found',
+      });
+  });
+
+  it(`/GET template found`, () => {
+    emailTemplateServiceMock.getById = jest
+      .fn()
+      .mockReturnValue(emailTemplateEntity);
+    return request
+      .get('/templates/666')
+      .auth(tokenAdminRole, { type: 'bearer' })
+      .expect(200)
+      .expect({
+        id: 666,
+        name: 'potato',
+        locales: [
+          {
+            subject: 'some Subject {{variableUno}}',
+            contents: 'some Contents',
+            locale: 'pl_PL',
+          },
+          {
+            subject: 'some eeee {{variableUno}}',
+            contents: 'some uuu',
+            locale: 'en_US',
+          },
+        ],
       });
   });
 
