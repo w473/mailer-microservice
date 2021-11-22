@@ -1,5 +1,6 @@
 import { EmailSendRequestDto } from 'src/handler/dtos/email-send-request.dto';
 import { emailTemplateEntity } from './templates';
+import { EmailEntity } from 'src/infrastructure/db/entities/email.entity';
 
 export const emailSendRequestDto: EmailSendRequestDto = {
   templateName: 'potato',
@@ -37,6 +38,23 @@ export const emailEntity2 = {
   recipients: [
     {
       email: null,
+      emailAddress: 'some@email.de',
+      name: 'tomato',
+      userId: '5ebd704d-28a9-4dcc-8fa3-c350137aab38',
+    },
+  ],
+  subject: 'some eeee pott',
+  template: emailTemplateEntity,
+};
+
+export const emailEntity3: EmailEntity = {
+  contents: 'some uuu',
+  id: null,
+  sent: null,
+  error: null,
+  recipients: [
+    {
+      email: undefined,
       emailAddress: 'some@email.de',
       name: 'tomato',
       userId: '5ebd704d-28a9-4dcc-8fa3-c350137aab38',

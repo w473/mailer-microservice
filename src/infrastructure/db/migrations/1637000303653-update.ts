@@ -20,10 +20,10 @@ export class update1637000303653 implements MigrationInterface {
       `ALTER TABLE "email_templates_locales" ADD CONSTRAINT "FK_c61b6023e40c51af61ebc904f8d" FOREIGN KEY ("template_id") REFERENCES "email_templates"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
-      `ALTER TABLE "emails" ADD CONSTRAINT "FK_36012b1c35262d9c66ebba40eb5" FOREIGN KEY ("template_id") REFERENCES "email_templates"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+      `ALTER TABLE "emails" ADD CONSTRAINT "FK_36012b1c35262d9c66ebba40eb5" FOREIGN KEY ("template_id") REFERENCES "email_templates"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
-      `ALTER TABLE "emails_recipients" ADD CONSTRAINT "FK_3b6f915c31a986a3e3e3d805bbc" FOREIGN KEY ("email_id") REFERENCES "emails"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+      `ALTER TABLE "emails_recipients" ADD CONSTRAINT "FK_3b6f915c31a986a3e3e3d805bbc" FOREIGN KEY ("email_id") REFERENCES "emails"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
   }
 
