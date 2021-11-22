@@ -8,7 +8,7 @@ export class EmailRecipientEntity {
 
   @ManyToOne(() => EmailEntity, (email) => email.recipients, {
     nullable: false,
-    cascade: true,
+    onDelete: 'CASCADE',
   })
   email: EmailEntity;
 

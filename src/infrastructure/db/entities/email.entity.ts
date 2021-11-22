@@ -1,7 +1,6 @@
 import {
   Column,
   Entity,
-  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -14,7 +13,9 @@ export class EmailEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToMany(() => EmailRecipientEntity, (recipients) => recipients.email)
+  @OneToMany(() => EmailRecipientEntity, (recipients) => recipients.email, {
+    cascade: true,
+  })
   recipients: EmailRecipientEntity[];
 
   @Column({ length: 1024 })
@@ -29,6 +30,10 @@ export class EmailEntity {
   @Column({ nullable: true })
   error: string | null;
 
-  @ManyToOne(() => EmailTemplateEntity, { nullable: false, cascade: true })
+  @ManyToOne(() => EmailTemplateEntity, {
+    nullable: false,
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   template: EmailTemplateEntity;
 }
