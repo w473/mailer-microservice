@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { EmailTemplateEntity } from '../../infrastructure/db/entities/email-template.entity';
 import { EmailTemplateLocaleDto } from '../../handler/dtos/email-template-locale.dto';
-import { DomainException } from 'src/domain/exceptions/domain.exception';
 import { EmailTemplateLocaleEntity } from 'src/infrastructure/db/entities/email-template-locale.entity';
 import { EmailTemplateNewDto } from 'src/handler/dtos/email-template-new.dto';
 import { EmailTemplateRepositoryInterface } from 'src/domain/repositories/email-template.repository.interface';

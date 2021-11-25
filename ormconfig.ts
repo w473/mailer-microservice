@@ -5,10 +5,6 @@ import {
 } from 'typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
-const NODE_ENV = process.env.NODE_ENV || 'development';
-const IS_TEST = NODE_ENV === 'test';
-const IS_DEV = NODE_ENV === 'development';
-
 const config: ConnectionOptions = {
   type: 'postgres',
   host: process.env.TYPEORM_HOST,

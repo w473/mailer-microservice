@@ -20,5 +20,7 @@ export class manualMigration1637000363205 implements MigrationInterface {
     );
   }
 
-  public async down(queryRunner: QueryRunner): Promise<void> {}
+  public async down(): Promise<void> {
+    //Nothing to do
+  }
 }
