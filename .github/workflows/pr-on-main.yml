@@ -1,4 +1,4 @@
-name: pull request on main branch
+name: run tests
 on: 
   pull_request:
     branches: [ main ]
@@ -24,10 +24,4 @@ jobs:
         run: npm run lint
       
       - name: Run tests
-        run: npm run test
-
-      - name: SonarCloud Scan
-        uses: sonarsource/sonarcloud-github-action@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: npm run test:build
