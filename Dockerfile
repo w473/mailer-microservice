@@ -1,23 +1,65 @@
-FROM node:14-alpine AS development
+FROM node:16-alpine AS development
 
 WORKDIR /app
 
 COPY package.json /app/package.json
+COPY package-lock.json /app/package-lock.json
 COPY tsconfig.build.json /app/tsconfig.build.json
 COPY tsconfig.json /app/tsconfig.json
+COPY src /app/src
+RUN apk add dumb-init
 
-FROM node:14-alpine as production
+FROM node:16-alpine as production
 
+RUN apk add dumb-init
 ARG NODE_ENV=production
+ARG EMAIL_SERVICE_HOST
+ARG EMAIL_SERVICE_PORT
+ARG EMAIL_SERVICE_USER
+ARG EMAIL_SERVICE_PASS
+ARG EMAIL_FROM_NAME
+ARG EMAIL_FROM_EMAIL
+ARG FALLBACK_LOCALE=en_US
+
+ARG TYPEORM_HOST
+ARG TYPEORM_USERNAME
+ARG TYPEORM_PASSWORD
+ARG TYPEORM_DATABASE
+ARG TYPEORM_PORT=5432
+
+ARG REDIS_HOST
+ARG REDIS_PASSWORD
+
+ENV PORT=3000
 ENV NODE_ENV=${NODE_ENV}
+
+ENV EMAIL_SERVICE_HOST=${EMAIL_SERVICE_HOST}
+ENV EMAIL_SERVICE_PORT=${EMAIL_SERVICE_PORT}
+ENV EMAIL_SERVICE_USER=${EMAIL_SERVICE_USER}
+ENV EMAIL_SERVICE_PASS=${EMAIL_SERVICE_PASS}
+
+ENV EMAIL_FROM_NAME=${EMAIL_FROM_NAME}
+ENV EMAIL_FROM_EMAIL=${EMAIL_FROM_EMAIL}
+ENV FALLBACK_LOCALE=${FALLBACK_LOCALE}
+
+ENV TYPEORM_HOST=${TYPEORM_HOST}
+ENV TYPEORM_USERNAME=${TYPEORM_USERNAME}
+ENV TYPEORM_PASSWORD=${TYPEORM_PASSWORD}
+ENV TYPEORM_DATABASE=${TYPEORM_DATABASE}
+ENV TYPEORM_PORT=${TYPEORM_PORT}
+
+ENV REDIS_HOST=${REDIS_HOST}
+ENV REDIS_PASSWORD=${REDIS_PASSWORD}
 
 WORKDIR /app
 
 ADD package.json /app/package.json
 COPY --from=development /app ./
-COPY src /app/src
 
 RUN npm ci --only=production
 RUN npm run build
 
-CMD ["npm", "run", "start:prod"]
+RUN rm -rf ./app/src
+
+#CMD ["npm", "run", "start:prod"]
+CMD ["dumb-init", "npm", "run", "start:prod"]

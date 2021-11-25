@@ -1,12 +1,12 @@
 # mailing-microservice
 ## Description
-Microservice for sendings emails
+Microservice for sending emails
 
 
 ## Installation
 
 ```bash
-$ npm install
+$ npm ci
 ```
 
 ## Running the app
@@ -26,11 +26,8 @@ $ npm run start:prod
 
 ```bash
 # unit tests
-$ npm run tests
-
-# e2e tests
-$ npm run tests:e2e
+$ npm run test
 
 # tests coverage
-$ npm run tests:cov
+$ npm run test:cov
 ```
