@@ -15,7 +15,6 @@ import { TemplatesController } from 'src/handler/controllers/templates.controlle
 import { EmailService } from 'src/application/services/email.service';
 import { EmailTemplateService } from 'src/application/services/email-template.service';
 import { AuthGuard } from 'src/handler/auth/auth.guard';
-import { BullModule } from '@nestjs/bull';
 import { ConfigService } from '@nestjs/config';
 import { EmailQueueConsumer } from 'src/handler/consumers/email-queue.consumer';
 import {
@@ -26,6 +25,7 @@ import { createTransport } from 'nodemailer';
 import { EmailTemplateRepository } from 'src/infrastructure/db/repositories/email-template.repository';
 import { EmailRepository } from 'src/infrastructure/db/repositories/email.repository';
 import { EmailTemplateLocaleRepository } from 'src/infrastructure/db/repositories/email-template-locale.repository';
+import { BullModule } from '@nestjs/bull';
 
 @Module({
   imports: [
@@ -48,7 +48,7 @@ import { EmailTemplateLocaleRepository } from 'src/infrastructure/db/repositorie
       }),
       inject: [ConfigService],
     }),
-    BullModule.registerQueue({
+    BullModule.registerQueueAsync({
       name: 'emails',
     }),
   ],

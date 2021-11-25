@@ -20,5 +20,4 @@ COPY src /app/src
 RUN npm ci --only=production
 RUN npm run build
 
-
 CMD ["npm", "run", "start:prod"]

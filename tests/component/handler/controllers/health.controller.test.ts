@@ -13,7 +13,7 @@ describe('HEALTH', () => {
       .useValue({ pingCheck: () => null })
       .compile();
 
-    app = await moduleRef.createNestApplication();
+    app = moduleRef.createNestApplication();
     await app.init();
   });
 
@@ -21,9 +21,9 @@ describe('HEALTH', () => {
     request = Request(app.getHttpServer());
   });
 
-  // afterAll(async () => {
-  //   await app.close();
-  // });
+  afterAll(async () => {
+    await app.close();
+  });
 
   it(`/GET health`, () => {
     return request

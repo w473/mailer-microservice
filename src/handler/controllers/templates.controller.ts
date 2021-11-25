@@ -145,7 +145,7 @@ export class TemplatesController {
       throw new NotFoundException('Email template does not exists');
     }
     try {
-      return this.emailTemplateService.deleteTemplateLocale(
+      return await this.emailTemplateService.deleteTemplateLocale(
         emailTemplateEntity,
         locale,
       );
