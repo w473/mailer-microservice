@@ -6,7 +6,6 @@ COPY package.json /app/package.json
 COPY tsconfig.build.json /app/tsconfig.build.json
 COPY tsconfig.json /app/tsconfig.json
 
-
 FROM node:14-alpine as production
 
 ARG NODE_ENV=production
@@ -18,7 +17,7 @@ ADD package.json /app/package.json
 COPY --from=development /app ./
 COPY src /app/src
 
-RUN npm install --only=production
+RUN npm ci --only=production
 RUN npm run build
 
 
