@@ -19,6 +19,5 @@ COPY src /app/src
 
 RUN npm ci --only=production
 RUN npm run build
-# test comment
 
 CMD ["npm", "run", "start:prod"]
