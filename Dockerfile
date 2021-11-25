@@ -6,9 +6,6 @@ COPY package.json /app/package.json
 COPY tsconfig.build.json /app/tsconfig.build.json
 COPY tsconfig.json /app/tsconfig.json
 
-RUN #npm install glob rimraf ansi-styles supports-color color-convert minimist chalk escape-string-regexp lru-cache
-
-RUN npm install
 
 FROM node:14-alpine as production
 
