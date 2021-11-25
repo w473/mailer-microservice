@@ -153,9 +153,9 @@ describe('EmailTemplateRepository', () => {
     const emailTemplateEntity = new EmailTemplateEntity();
     emailTemplateEntity.name = 'asdte';
 
-    await emailTemplateRepository.save(emailTemplateEntity),
-      expect(await emailTemplateRepository.remove(emailTemplateEntity)).toEqual(
-        undefined,
-      );
+    await emailTemplateRepository.save(emailTemplateEntity);
+    expect(await emailTemplateRepository.remove(emailTemplateEntity)).toEqual(
+      undefined,
+    );
   });
 });
