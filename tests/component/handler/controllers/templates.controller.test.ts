@@ -25,7 +25,7 @@ describe('Templates', () => {
 
       .compile();
 
-    app = await moduleRef.createNestApplication();
+    app = moduleRef.createNestApplication();
     app.useGlobalPipes(
       new ValidationPipe({
         transform: true,
@@ -39,9 +39,9 @@ describe('Templates', () => {
     mockReset(emailTemplateServiceMock);
   });
 
-  // afterAll(async () => {
-  //   await app.close();
-  // });
+  afterAll(async () => {
+    await app.close();
+  });
 
   describe('Templates GET', () => {
     it(`/GET templates 403`, () => {

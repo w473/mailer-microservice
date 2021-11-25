@@ -6,6 +6,8 @@ import { EmailRecipientEntity } from 'src/infrastructure/db/entities/email-recip
 import { EmailEntity } from 'src/infrastructure/db/entities/email.entity';
 import { EmailTemplateEntity } from 'src/infrastructure/db/entities/email-template.entity';
 import { EmailTemplateLocaleEntity } from 'src/infrastructure/db/entities/email-template-locale.entity';
+import { mock } from 'jest-mock-extended';
+import { Queue } from 'bull';
 
 export const testingModule = Test.createTestingModule({
   imports: [
@@ -24,4 +26,6 @@ export const testingModule = Test.createTestingModule({
   .overrideProvider(getRepositoryToken(EmailTemplateEntity))
   .useValue({})
   .overrideProvider(getRepositoryToken(EmailTemplateLocaleEntity))
-  .useValue({});
+  .useValue({})
+  .overrideProvider('BullQueue_emails')
+  .useValue(mock<Queue>());

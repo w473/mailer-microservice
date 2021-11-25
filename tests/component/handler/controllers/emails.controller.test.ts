@@ -5,6 +5,8 @@ import { testingModule } from './testing.module';
 import { tokenAdminRole, tokenNoRole } from '../../../__mockdata__/jwt.tokens';
 import { emailEntity, emailSendRequestDto } from '../../../__mockdata__/emails';
 import { EmailService } from 'src/application/services/email.service';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { EmailRecipientEntity } from 'src/infrastructure/db/entities/email-recipient.entity';
 
 describe('Emails', () => {
   let app: INestApplication;
@@ -20,10 +22,9 @@ describe('Emails', () => {
       .useValue({ pingCheck: () => null })
       .overrideProvider(EmailService)
       .useValue(emailServiceMock)
-
       .compile();
 
-    app = await moduleRef.createNestApplication();
+    app = moduleRef.createNestApplication();
     app.useGlobalPipes(
       new ValidationPipe({
         transform: true,
@@ -36,9 +37,9 @@ describe('Emails', () => {
     request = Request(app.getHttpServer());
   });
 
-  // afterAll(async () => {
-  //   await app.close();
-  // });
+  afterAll(async () => {
+    await app.close();
+  });
 
   it(`/GET emails no token forbidden`, () => {
     return request.get('/').expect(403).expect({
