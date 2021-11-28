@@ -31,3 +31,14 @@ $ npm run test
 # tests coverage
 $ npm run test:cov
 ```
+
+## Docker images:
+ghcr.io/w473/mailer-microservice:latest
+
+and
+
+ghcr.io/w473/mailer-microservice:TAG
+
+e.g.
+
+ghcr.io/w473/mailer-microservice:0.0.1
