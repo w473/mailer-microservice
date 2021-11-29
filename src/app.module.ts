@@ -14,7 +14,7 @@ import { EmailsController } from 'src/handler/controllers/emails.controller';
 import { TemplatesController } from 'src/handler/controllers/templates.controller';
 import { EmailService } from 'src/application/services/email.service';
 import { EmailTemplateService } from 'src/application/services/email-template.service';
-import { AuthGuard } from 'src/handler/auth/auth.guard';
+import { AuthorizationGuard } from 'src/handler/auth/authorization.guard';
 import { ConfigService } from '@nestjs/config';
 import { EmailQueueConsumer } from 'src/handler/consumers/email-queue.consumer';
 import {
@@ -60,7 +60,7 @@ import { BullModule } from '@nestjs/bull';
     EmailSendService,
     {
       provide: APP_GUARD,
-      useClass: AuthGuard,
+      useClass: AuthorizationGuard,
     },
     {
       provide: APP_GUARD,

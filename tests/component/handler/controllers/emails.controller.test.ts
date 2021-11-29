@@ -7,8 +7,10 @@ import { emailEntity, emailSendRequestDto } from '../../../__mockdata__/emails';
 import { EmailService } from 'src/application/services/email.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { EmailRecipientEntity } from 'src/infrastructure/db/entities/email-recipient.entity';
+import { DEFAULT_AUTHORIZATION_HEADER } from 'src/statics';
 
 describe('Emails', () => {
+  const basicPath = '/api/v1/emails';
   let app: INestApplication;
   let request: Request.SuperTest<Request.Test>;
   const emailServiceMock = {
@@ -42,17 +44,20 @@ describe('Emails', () => {
   });
 
   it(`/GET emails no token forbidden`, () => {
-    return request.get('/').expect(403).expect({
-      statusCode: 403,
-      message: 'Forbidden resource',
-      error: 'Forbidden',
-    });
+    return request
+      .get(basicPath + '/')
+      .expect(403)
+      .expect({
+        statusCode: 403,
+        message: 'Forbidden resource',
+        error: 'Forbidden',
+      });
   });
 
   it(`/GET emails no proper roles`, () => {
     return request
-      .get('/')
-      .auth(tokenNoRole, { type: 'bearer' })
+      .get(basicPath + '/')
+      .set(DEFAULT_AUTHORIZATION_HEADER, tokenNoRole)
       .expect(403)
       .expect({
         statusCode: 403,
@@ -65,8 +70,8 @@ describe('Emails', () => {
     emailServiceMock.findAllBy = jest.fn().mockReturnValue([[emailEntity], 1]);
 
     return request
-      .get('/')
-      .auth(tokenAdminRole, { type: 'bearer' })
+      .get(basicPath + '/')
+      .set(DEFAULT_AUTHORIZATION_HEADER, tokenAdminRole)
       .expect(200)
       .expect({
         items: [
@@ -92,8 +97,8 @@ describe('Emails', () => {
     emailServiceMock.findAllBy = jest.fn().mockReturnValue([[emailEntity], 1]);
 
     return request
-      .get('/?email_id=666')
-      .auth(tokenAdminRole, { type: 'bearer' })
+      .get(basicPath + '/?email_id=666')
+      .set(DEFAULT_AUTHORIZATION_HEADER, tokenAdminRole)
       .expect(200)
       .expect({
         items: [
@@ -116,17 +121,20 @@ describe('Emails', () => {
   });
 
   it(`/Post send email no token forbidden`, () => {
-    return request.post('/').expect(403).expect({
-      statusCode: 403,
-      message: 'Forbidden resource',
-      error: 'Forbidden',
-    });
+    return request
+      .post(basicPath + '/')
+      .expect(403)
+      .expect({
+        statusCode: 403,
+        message: 'Forbidden resource',
+        error: 'Forbidden',
+      });
   });
 
   it(`/Post send email validation failed`, () => {
     return request
-      .post('/')
-      .auth(tokenAdminRole, { type: 'bearer' })
+      .post(basicPath + '/')
+      .set(DEFAULT_AUTHORIZATION_HEADER, tokenAdminRole)
       .expect(400)
       .expect({
         statusCode: 400,
@@ -141,9 +149,9 @@ describe('Emails', () => {
 
   it(`/Post send email ok`, () => {
     return request
-      .post('/')
+      .post(basicPath + '/')
       .send(emailSendRequestDto)
-      .auth(tokenAdminRole, { type: 'bearer' })
+      .set(DEFAULT_AUTHORIZATION_HEADER, tokenAdminRole)
       .expect(201)
       .expect({});
   });

@@ -1,16 +1,18 @@
-import { AuthGuard } from 'src/handler/auth/auth.guard';
+import { AuthorizationGuard } from 'src/handler/auth/authorization.guard';
 import { Reflector } from '@nestjs/core';
 import { mock, mockReset } from 'jest-mock-extended';
 import { ExecutionContext } from '@nestjs/common/interfaces/features/execution-context.interface';
 import { HttpArgumentsHost } from '@nestjs/common/interfaces/features/arguments-host.interface';
 import { Request } from 'express';
+import { ConfigService } from '@nestjs/config';
 
-describe('AuthGuard test', () => {
-  let authGuard: AuthGuard;
+describe('AuthorizationGuard test', () => {
+  let authGuard: AuthorizationGuard;
   const reflectorMock = mock<Reflector>();
+  const configServiceMock = mock<ConfigService>();
 
   beforeEach(async () => {
-    authGuard = new AuthGuard(reflectorMock);
+    authGuard = new AuthorizationGuard(reflectorMock, configServiceMock);
   });
 
   afterEach(() => {

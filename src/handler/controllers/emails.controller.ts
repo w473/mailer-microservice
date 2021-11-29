@@ -9,7 +9,7 @@ import { ApiCreatedResponse, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ApiOkResponse } from '@nestjs/swagger/dist/decorators/api-response.decorator';
 import { ParseIntPipeOrDefault } from 'src/handler/pipes/parse-int-pipe-or-default';
 
-@Controller()
+@Controller('api/v1/emails')
 @ApiTags('emails')
 export class EmailsController {
   constructor(private readonly emailService: EmailService) {}

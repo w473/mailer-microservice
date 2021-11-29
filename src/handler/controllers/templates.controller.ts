@@ -32,7 +32,7 @@ import { ParseLocalePipe } from 'src/handler/pipes/parse-locale-pipe';
 import { EmailTemplateNewDto } from 'src/handler/dtos/email-template-new.dto';
 import { NotFoundException as LocalNotFoundException } from 'src/domain/exceptions/not-found.exception';
 
-@Controller('templates')
+@Controller('api/v1/templates')
 @ApiTags('templates')
 export class TemplatesController {
   constructor(private readonly emailTemplateService: EmailTemplateService) {}
