@@ -10,8 +10,10 @@ import {
 } from '../../../__mockdata__/templates';
 import { mock, mockReset } from 'jest-mock-extended';
 import { NotFoundException } from 'src/domain/exceptions/not-found.exception';
+import { DEFAULT_AUTHORIZATION_HEADER } from 'src/statics';
 
 describe('Templates', () => {
+  const basicPath = '/api/v1/templates';
   let app: INestApplication;
   let request: Request.SuperTest<Request.Test>;
   const emailTemplateServiceMock = mock<EmailTemplateService>();
@@ -45,7 +47,7 @@ describe('Templates', () => {
 
   describe('Templates GET', () => {
     it(`/GET templates 403`, () => {
-      return request.get('/templates').expect(403).expect({
+      return request.get(basicPath).expect(403).expect({
         statusCode: 403,
         message: 'Forbidden resource',
         error: 'Forbidden',
@@ -59,8 +61,8 @@ describe('Templates', () => {
       ]);
 
       return request
-        .get('/templates')
-        .auth(tokenAdminRole, { type: 'bearer' })
+        .get(basicPath)
+        .set(DEFAULT_AUTHORIZATION_HEADER, tokenAdminRole)
         .expect(200)
         .expect({
           items: [
@@ -87,8 +89,8 @@ describe('Templates', () => {
 
     it(`/GET template 403`, () => {
       return request
-        .get('/templates/666')
-        .auth(tokenNoRole, { type: 'bearer' })
+        .get(basicPath + '/666')
+        .set(DEFAULT_AUTHORIZATION_HEADER, tokenNoRole)
         .expect(403)
         .expect({
           statusCode: 403,
@@ -99,8 +101,8 @@ describe('Templates', () => {
 
     it(`/GET template not found`, () => {
       return request
-        .get('/templates/666')
-        .auth(tokenAdminRole, { type: 'bearer' })
+        .get(basicPath + '/666')
+        .set(DEFAULT_AUTHORIZATION_HEADER, tokenAdminRole)
         .expect(404)
         .expect({
           statusCode: 404,
@@ -113,8 +115,8 @@ describe('Templates', () => {
       emailTemplateServiceMock.getById.mockResolvedValue(emailTemplateEntity);
 
       return request
-        .get('/templates/666')
-        .auth(tokenAdminRole, { type: 'bearer' })
+        .get(basicPath + '/666')
+        .set(DEFAULT_AUTHORIZATION_HEADER, tokenAdminRole)
         .expect(200)
         .expect({
           id: 666,
@@ -138,8 +140,8 @@ describe('Templates', () => {
   describe('Templates Add', () => {
     it(`POST (add) template 403`, () => {
       return request
-        .post('/templates')
-        .auth(tokenNoRole, { type: 'bearer' })
+        .post(basicPath)
+        .set(DEFAULT_AUTHORIZATION_HEADER, tokenNoRole)
         .expect(403)
         .expect({
           statusCode: 403,
@@ -150,8 +152,8 @@ describe('Templates', () => {
 
     it(`POST (add) template 400 validation failed`, () => {
       return request
-        .post('/templates')
-        .auth(tokenAdminRole, { type: 'bearer' })
+        .post(basicPath)
+        .set(DEFAULT_AUTHORIZATION_HEADER, tokenAdminRole)
         .expect(400)
         .expect({
           statusCode: 400,
@@ -165,9 +167,9 @@ describe('Templates', () => {
 
     it(`POST (add) template OK`, () => {
       return request
-        .post('/templates')
+        .post(basicPath)
         .send(emailTemplateDto)
-        .auth(tokenAdminRole, { type: 'bearer' })
+        .set(DEFAULT_AUTHORIZATION_HEADER, tokenAdminRole)
         .expect(201)
         .expect({});
     });
@@ -176,8 +178,8 @@ describe('Templates', () => {
   describe('Templates Patch', () => {
     it(`PATCH template 403`, () => {
       return request
-        .patch('/templates/666')
-        .auth(tokenNoRole, { type: 'bearer' })
+        .patch(basicPath + '/666')
+        .set(DEFAULT_AUTHORIZATION_HEADER, tokenNoRole)
         .expect(403)
         .expect({
           statusCode: 403,
@@ -188,8 +190,8 @@ describe('Templates', () => {
 
     it(`PATCH Template Validation failed`, () => {
       return request
-        .patch('/templates/666')
-        .auth(tokenAdminRole, { type: 'bearer' })
+        .patch(basicPath + '/666')
+        .set(DEFAULT_AUTHORIZATION_HEADER, tokenAdminRole)
         .expect(400)
         .expect({
           statusCode: 400,
@@ -200,9 +202,9 @@ describe('Templates', () => {
 
     it(`PATCH Template does not exist`, () => {
       return request
-        .patch('/templates/666')
+        .patch(basicPath + '/666')
         .send({ name: 'kopytko' })
-        .auth(tokenAdminRole, { type: 'bearer' })
+        .set(DEFAULT_AUTHORIZATION_HEADER, tokenAdminRole)
         .expect(404)
         .expect({
           statusCode: 404,
@@ -214,9 +216,9 @@ describe('Templates', () => {
     it(`PATCH Template OK`, () => {
       emailTemplateServiceMock.getById.mockResolvedValue(emailTemplateEntity);
       return request
-        .patch('/templates/666')
+        .patch(basicPath + '/666')
         .send({ name: 'kopytko' })
-        .auth(tokenAdminRole, { type: 'bearer' })
+        .set(DEFAULT_AUTHORIZATION_HEADER, tokenAdminRole)
         .expect(200)
         .expect({});
     });
@@ -225,8 +227,8 @@ describe('Templates', () => {
   describe('PATCH locale', () => {
     it(`PATCH locale 403`, () => {
       return request
-        .patch('/templates/666/locale')
-        .auth(tokenNoRole, { type: 'bearer' })
+        .patch(basicPath + '/666/locale')
+        .set(DEFAULT_AUTHORIZATION_HEADER, tokenNoRole)
         .expect(403)
         .expect({
           statusCode: 403,
@@ -236,9 +238,9 @@ describe('Templates', () => {
     });
     it(`PATCH locale 404`, () => {
       return request
-        .patch('/templates/666/locale')
+        .patch(basicPath + '/666/locale')
         .send(emailTemplateDto.locales[0])
-        .auth(tokenAdminRole, { type: 'bearer' })
+        .set(DEFAULT_AUTHORIZATION_HEADER, tokenAdminRole)
         .expect(404)
         .expect({
           statusCode: 404,
@@ -249,8 +251,8 @@ describe('Templates', () => {
 
     it(`PATCH locale 400 validation`, () => {
       return request
-        .patch('/templates/666/locale')
-        .auth(tokenAdminRole, { type: 'bearer' })
+        .patch(basicPath + '/666/locale')
+        .set(DEFAULT_AUTHORIZATION_HEADER, tokenAdminRole)
         .expect(400)
         .expect({
           statusCode: 400,
@@ -267,9 +269,9 @@ describe('Templates', () => {
       emailTemplateServiceMock.getById.mockResolvedValue(emailTemplateEntity);
 
       return request
-        .patch('/templates/666/locale')
+        .patch(basicPath + '/666/locale')
         .send(emailTemplateDto.locales[0])
-        .auth(tokenAdminRole, { type: 'bearer' })
+        .set(DEFAULT_AUTHORIZATION_HEADER, tokenAdminRole)
         .expect(200)
         .expect({});
     });
@@ -278,8 +280,8 @@ describe('Templates', () => {
   describe('Templates GET', () => {
     it(`DELETE template 403`, () => {
       return request
-        .delete('/templates/666')
-        .auth(tokenNoRole, { type: 'bearer' })
+        .delete(basicPath + '/666')
+        .set(DEFAULT_AUTHORIZATION_HEADER, tokenNoRole)
         .expect(403)
         .expect({
           statusCode: 403,
@@ -289,8 +291,8 @@ describe('Templates', () => {
     });
     it(`DELETE template 404`, () => {
       return request
-        .delete('/templates/666')
-        .auth(tokenAdminRole, { type: 'bearer' })
+        .delete(basicPath + '/666')
+        .set(DEFAULT_AUTHORIZATION_HEADER, tokenAdminRole)
         .expect(404)
         .expect({
           statusCode: 404,
@@ -301,8 +303,8 @@ describe('Templates', () => {
     it(`DELETE template OK`, () => {
       emailTemplateServiceMock.getById.mockResolvedValue(emailTemplateEntity);
       return request
-        .delete('/templates/666')
-        .auth(tokenAdminRole, { type: 'bearer' })
+        .delete(basicPath + '/666')
+        .set(DEFAULT_AUTHORIZATION_HEADER, tokenAdminRole)
         .expect(200)
         .expect({});
     });
@@ -311,8 +313,8 @@ describe('Templates', () => {
   describe('Templates GET', () => {
     it(`DELETE template locale 403`, () => {
       return request
-        .delete('/templates/666/locale')
-        .auth(tokenNoRole, { type: 'bearer' })
+        .delete(basicPath + '/666/locale')
+        .set(DEFAULT_AUTHORIZATION_HEADER, tokenNoRole)
         .expect(403)
         .expect({
           statusCode: 403,
@@ -323,8 +325,8 @@ describe('Templates', () => {
 
     it(`DELETE template locale 400`, () => {
       return request
-        .delete('/templates/666/locale')
-        .auth(tokenAdminRole, { type: 'bearer' })
+        .delete(basicPath + '/666/locale')
+        .set(DEFAULT_AUTHORIZATION_HEADER, tokenAdminRole)
         .expect(400)
         .expect({
           statusCode: 400,
@@ -335,8 +337,8 @@ describe('Templates', () => {
 
     it(`DELETE template locale 404`, () => {
       return request
-        .delete('/templates/666/de_DE')
-        .auth(tokenAdminRole, { type: 'bearer' })
+        .delete(basicPath + '/666/de_DE')
+        .set(DEFAULT_AUTHORIZATION_HEADER, tokenAdminRole)
         .expect(404)
         .expect({
           statusCode: 404,
@@ -351,8 +353,8 @@ describe('Templates', () => {
         throw new NotFoundException('Template locale does not exists');
       });
       return request
-        .delete('/templates/666/er_DE')
-        .auth(tokenAdminRole, { type: 'bearer' })
+        .delete(basicPath + '/666/er_DE')
+        .set(DEFAULT_AUTHORIZATION_HEADER, tokenAdminRole)
         .expect(404)
         .expect({
           statusCode: 404,
@@ -367,8 +369,8 @@ describe('Templates', () => {
         throw new Error();
       });
       return request
-        .delete('/templates/666/er_DE')
-        .auth(tokenAdminRole, { type: 'bearer' })
+        .delete(basicPath + '/666/er_DE')
+        .set(DEFAULT_AUTHORIZATION_HEADER, tokenAdminRole)
         .expect(500)
         .expect({ statusCode: 500, message: 'Internal server error' });
     });
@@ -376,8 +378,8 @@ describe('Templates', () => {
     it(`DELETE template OK`, () => {
       emailTemplateServiceMock.getById.mockResolvedValue(emailTemplateEntity);
       return request
-        .delete('/templates/666/pl_PL')
-        .auth(tokenAdminRole, { type: 'bearer' })
+        .delete(basicPath + '/666/pl_PL')
+        .set(DEFAULT_AUTHORIZATION_HEADER, tokenAdminRole)
         .expect(200)
         .expect({});
     });
