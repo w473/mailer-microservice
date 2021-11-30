@@ -5,7 +5,7 @@ import {
   TypeOrmHealthIndicator,
 } from '@nestjs/terminus';
 import { ApiTags } from '@nestjs/swagger';
-import { IsPublic } from 'src/handler/decorators/public.decorator';
+import { IsPublic } from 'nestjs-keycloak-authorize';
 
 @ApiTags('health')
 @Controller('health')
