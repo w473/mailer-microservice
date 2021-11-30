@@ -4,10 +4,10 @@ import { EmailSendRequestDto } from '../dtos/email-send-request.dto';
 import { EmailService } from '../../application/services/email.service';
 import { EmailDto, fromEmailEntities } from '../dtos/email.dto';
 import { ItemsWithTotalResponseDto } from '../dtos/items-with-total-response.dto';
-import { HasRole } from '../decorators/has-role.decorator';
 import { ApiCreatedResponse, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ApiOkResponse } from '@nestjs/swagger/dist/decorators/api-response.decorator';
 import { ParseIntPipeOrDefault } from 'src/handler/pipes/parse-int-pipe-or-default';
+import { HasRole } from 'nestjs-keycloak-authorize';
 
 @Controller('api/v1/emails')
 @ApiTags('emails')

@@ -2,19 +2,17 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { TerminusModule } from '@nestjs/terminus';
 import { HttpModule } from '@nestjs/axios';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, Reflector } from '@nestjs/core';
 import { LoggerMiddleware } from './handler/middlewares/logger.middleware';
 import { HealthController } from './handler/controllers/health.controller';
 import { EmailEntity } from './infrastructure/db/entities/email.entity';
 import { EmailRecipientEntity } from './infrastructure/db/entities/email-recipient.entity';
 import { EmailTemplateEntity } from './infrastructure/db/entities/email-template.entity';
 import { EmailTemplateLocaleEntity } from './infrastructure/db/entities/email-template-locale.entity';
-import { RolesGuard } from './handler/auth/roles.guard';
 import { EmailsController } from 'src/handler/controllers/emails.controller';
 import { TemplatesController } from 'src/handler/controllers/templates.controller';
 import { EmailService } from 'src/application/services/email.service';
 import { EmailTemplateService } from 'src/application/services/email-template.service';
-import { AuthorizationGuard } from 'src/handler/auth/authorization.guard';
 import { ConfigService } from '@nestjs/config';
 import { EmailQueueConsumer } from 'src/handler/consumers/email-queue.consumer';
 import {
@@ -26,6 +24,8 @@ import { EmailTemplateRepository } from 'src/infrastructure/db/repositories/emai
 import { EmailRepository } from 'src/infrastructure/db/repositories/email.repository';
 import { EmailTemplateLocaleRepository } from 'src/infrastructure/db/repositories/email-template-locale.repository';
 import { BullModule } from '@nestjs/bull';
+import { AuthorizationGuard, RolesGuard } from 'nestjs-keycloak-authorize';
+import { DEFAULT_AUTHORIZATION_HEADER } from 'src/statics';
 
 @Module({
   imports: [
@@ -60,7 +60,13 @@ import { BullModule } from '@nestjs/bull';
     EmailSendService,
     {
       provide: APP_GUARD,
-      useClass: AuthorizationGuard,
+      inject: [ConfigService, Reflector],
+      useFactory: (configService: ConfigService, reflector: Reflector) => {
+        const authorizationHeader =
+          configService.get('AUTHORIZATION_HEADER') ??
+          DEFAULT_AUTHORIZATION_HEADER;
+        return new AuthorizationGuard(reflector, authorizationHeader);
+      },
     },
     {
       provide: APP_GUARD,

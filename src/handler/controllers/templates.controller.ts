@@ -11,7 +11,6 @@ import {
   Delete,
   ParseIntPipe,
 } from '@nestjs/common';
-import { HasRole } from '../decorators/has-role.decorator';
 import {
   ApiCreatedResponse,
   ApiNotFoundResponse,
@@ -31,6 +30,7 @@ import { ParseIntPipeOrDefault } from 'src/handler/pipes/parse-int-pipe-or-defau
 import { ParseLocalePipe } from 'src/handler/pipes/parse-locale-pipe';
 import { EmailTemplateNewDto } from 'src/handler/dtos/email-template-new.dto';
 import { NotFoundException as LocalNotFoundException } from 'src/domain/exceptions/not-found.exception';
+import { HasRole } from 'nestjs-keycloak-authorize';
 
 @Controller('api/v1/templates')
 @ApiTags('templates')
