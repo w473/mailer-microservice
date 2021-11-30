@@ -21,12 +21,6 @@
       "strict": true,
       "paths": {
          "src/*": ["src/*"],
-      },
-      "plugins": [
-         {
-            "transform": "ts-auto-mock/transformer",
-            "cacheBetweenTests": false
-         }
-      ]
+      }
    }
 }

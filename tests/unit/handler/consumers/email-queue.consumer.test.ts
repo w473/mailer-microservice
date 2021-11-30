@@ -2,8 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { EmailQueueConsumer } from 'src/handler/consumers/email-queue.consumer';
 import { EmailSendService } from 'src/application/services/email-send.service';
 import { Job } from 'bull';
-import { createMock } from 'ts-auto-mock';
-import { Logger } from '@nestjs/common/services/logger.service';
+import { mock } from 'jest-mock-extended';
 
 describe('EmailQueueConsumer test', () => {
   let emailQueueConsumer: EmailQueueConsumer;
@@ -36,7 +35,7 @@ describe('EmailQueueConsumer test', () => {
   describe('sendEmail', () => {
     it('sendEmail proper', async () => {
       const emailId = 666;
-      const job = createMock<Job<{ emailId: number }>>();
+      const job = mock<Job<{ emailId: number }>>();
       job.data.emailId = emailId;
       await emailQueueConsumer.sendEmail(job);
       expect(emailSendServiceMock.sendEmailById).toBeCalledWith(emailId);
@@ -45,7 +44,7 @@ describe('EmailQueueConsumer test', () => {
 
     it('sendEmail log warning', async () => {
       const emailId = 666;
-      const job = createMock<Job<{ emailId: number }>>();
+      const job = mock<Job<{ emailId: number }>>();
       job.data.emailId = emailId;
 
       const error = new Error('just broken');
