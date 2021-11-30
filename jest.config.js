@@ -31,6 +31,5 @@ module.exports = {
       compiler: 'ttypescript',
     },
   },
-  setupFiles: ['<rootDir>test.config.ts'],
   clearMocks: true,
 };
