@@ -26,10 +26,5 @@ module.exports = {
   },
   roots: ['<rootDir>'],
   modulePaths: ['<rootDir>'],
-  globals: {
-    'ts-jest': {
-      compiler: 'ttypescript',
-    },
-  },
   clearMocks: true,
 };
