@@ -12,12 +12,12 @@ export class EmailRecipientEntity {
   })
   email: EmailEntity;
 
-  @Column({ type: 'uuid' })
-  userId: string;
+  @Column({ type: 'uuid', nullable: true })
+  userId?: string;
 
   @Column({ length: 1024 })
   emailAddress: string;
 
-  @Column({ length: 1024 })
+  @Column({ length: 1024, nullable: true })
   name: string;
 }

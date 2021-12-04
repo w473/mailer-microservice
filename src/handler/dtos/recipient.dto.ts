@@ -4,7 +4,7 @@ import { ApiProperty } from '@nestjs/swagger';
 export class RecipientDto {
   @ApiProperty()
   @IsUUID()
-  userId: string;
+  userId?: string;
 
   @ApiProperty()
   @IsEmail()
@@ -12,5 +12,5 @@ export class RecipientDto {
 
   @ApiProperty()
   @Length(5, 256)
-  name: string;
+  name?: string;
 }
