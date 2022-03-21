@@ -43,29 +43,6 @@ describe('Emails', () => {
     await app.close();
   });
 
-  it(`/GET emails no token forbidden`, () => {
-    return request
-      .get(basicPath + '/')
-      .expect(403)
-      .expect({
-        statusCode: 403,
-        message: 'Forbidden resource',
-        error: 'Forbidden',
-      });
-  });
-
-  it(`/GET emails no proper roles`, () => {
-    return request
-      .get(basicPath + '/')
-      .set(DEFAULT_AUTHORIZATION_HEADER, tokenNoRole)
-      .expect(403)
-      .expect({
-        statusCode: 403,
-        message: 'Forbidden resource',
-        error: 'Forbidden',
-      });
-  });
-
   it(`/GET emails`, () => {
     emailServiceMock.findAllBy = jest.fn().mockReturnValue([[emailEntity], 1]);
 
@@ -117,17 +94,6 @@ describe('Emails', () => {
           },
         ],
         total: 1,
-      });
-  });
-
-  it(`/Post send email no token forbidden`, () => {
-    return request
-      .post(basicPath + '/')
-      .expect(403)
-      .expect({
-        statusCode: 403,
-        message: 'Forbidden resource',
-        error: 'Forbidden',
       });
   });
 

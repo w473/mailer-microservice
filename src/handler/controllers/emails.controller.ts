@@ -7,7 +7,6 @@ import { ItemsWithTotalResponseDto } from '../dtos/items-with-total-response.dto
 import { ApiCreatedResponse, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ApiOkResponse } from '@nestjs/swagger/dist/decorators/api-response.decorator';
 import { ParseIntPipeOrDefault } from 'src/handler/pipes/parse-int-pipe-or-default';
-import { HasRole } from 'nestjs-keycloak-authorize';
 
 @Controller('api/v1/emails')
 @ApiTags('emails')
@@ -15,14 +14,12 @@ export class EmailsController {
   constructor(private readonly emailService: EmailService) {}
 
   @Post()
-  @HasRole('ADMIN', 'SYS')
   @ApiCreatedResponse()
   async send(@Body() emailSendRequestDto: EmailSendRequestDto): Promise<void> {
     return this.emailService.send(emailSendRequestDto);
   }
 
   @Get()
-  @HasRole('ADMIN')
   @ApiOkResponse({
     description: 'Response with all found emails and total number',
   })

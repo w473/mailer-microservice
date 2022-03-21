@@ -46,14 +46,6 @@ describe('Templates', () => {
   });
 
   describe('Templates GET', () => {
-    it(`/GET templates 403`, () => {
-      return request.get(basicPath).expect(403).expect({
-        statusCode: 403,
-        message: 'Forbidden resource',
-        error: 'Forbidden',
-      });
-    });
-
     it(`/GET templates `, () => {
       emailTemplateServiceMock.findAllTemplates.mockResolvedValue([
         [emailTemplateEntity],
@@ -84,18 +76,6 @@ describe('Templates', () => {
             },
           ],
           total: 1,
-        });
-    });
-
-    it(`/GET template 403`, () => {
-      return request
-        .get(basicPath + '/666')
-        .set(DEFAULT_AUTHORIZATION_HEADER, tokenNoRole)
-        .expect(403)
-        .expect({
-          statusCode: 403,
-          message: 'Forbidden resource',
-          error: 'Forbidden',
         });
     });
 
@@ -138,18 +118,6 @@ describe('Templates', () => {
   });
 
   describe('Templates Add', () => {
-    it(`POST (add) template 403`, () => {
-      return request
-        .post(basicPath)
-        .set(DEFAULT_AUTHORIZATION_HEADER, tokenNoRole)
-        .expect(403)
-        .expect({
-          statusCode: 403,
-          message: 'Forbidden resource',
-          error: 'Forbidden',
-        });
-    });
-
     it(`POST (add) template 400 validation failed`, () => {
       return request
         .post(basicPath)
@@ -176,18 +144,6 @@ describe('Templates', () => {
   });
 
   describe('Templates Patch', () => {
-    it(`PATCH template 403`, () => {
-      return request
-        .patch(basicPath + '/666')
-        .set(DEFAULT_AUTHORIZATION_HEADER, tokenNoRole)
-        .expect(403)
-        .expect({
-          statusCode: 403,
-          message: 'Forbidden resource',
-          error: 'Forbidden',
-        });
-    });
-
     it(`PATCH Template Validation failed`, () => {
       return request
         .patch(basicPath + '/666')
@@ -225,17 +181,6 @@ describe('Templates', () => {
   });
 
   describe('PATCH locale', () => {
-    it(`PATCH locale 403`, () => {
-      return request
-        .patch(basicPath + '/666/locale')
-        .set(DEFAULT_AUTHORIZATION_HEADER, tokenNoRole)
-        .expect(403)
-        .expect({
-          statusCode: 403,
-          message: 'Forbidden resource',
-          error: 'Forbidden',
-        });
-    });
     it(`PATCH locale 404`, () => {
       return request
         .patch(basicPath + '/666/locale')
@@ -278,17 +223,6 @@ describe('Templates', () => {
   });
 
   describe('Templates GET', () => {
-    it(`DELETE template 403`, () => {
-      return request
-        .delete(basicPath + '/666')
-        .set(DEFAULT_AUTHORIZATION_HEADER, tokenNoRole)
-        .expect(403)
-        .expect({
-          statusCode: 403,
-          message: 'Forbidden resource',
-          error: 'Forbidden',
-        });
-    });
     it(`DELETE template 404`, () => {
       return request
         .delete(basicPath + '/666')
@@ -311,18 +245,6 @@ describe('Templates', () => {
   });
 
   describe('Templates GET', () => {
-    it(`DELETE template locale 403`, () => {
-      return request
-        .delete(basicPath + '/666/locale')
-        .set(DEFAULT_AUTHORIZATION_HEADER, tokenNoRole)
-        .expect(403)
-        .expect({
-          statusCode: 403,
-          message: 'Forbidden resource',
-          error: 'Forbidden',
-        });
-    });
-
     it(`DELETE template locale 400`, () => {
       return request
         .delete(basicPath + '/666/locale')

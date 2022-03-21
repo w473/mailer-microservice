@@ -30,7 +30,6 @@ import { ParseIntPipeOrDefault } from 'src/handler/pipes/parse-int-pipe-or-defau
 import { ParseLocalePipe } from 'src/handler/pipes/parse-locale-pipe';
 import { EmailTemplateNewDto } from 'src/handler/dtos/email-template-new.dto';
 import { NotFoundException as LocalNotFoundException } from 'src/domain/exceptions/not-found.exception';
-import { HasRole } from 'nestjs-keycloak-authorize';
 
 @Controller('api/v1/templates')
 @ApiTags('templates')
@@ -38,7 +37,6 @@ export class TemplatesController {
   constructor(private readonly emailTemplateService: EmailTemplateService) {}
 
   @Get()
-  @HasRole('ADMIN')
   @ApiOkResponse({
     description: 'Response with all found templates and total number',
   })
@@ -60,7 +58,6 @@ export class TemplatesController {
   }
 
   @Get(':templateId')
-  @HasRole('ADMIN')
   @ApiOkResponse({ type: EmailTemplateDto })
   @ApiNotFoundResponse({ description: 'Template does not exist' })
   async findOneById(
@@ -74,7 +71,6 @@ export class TemplatesController {
   }
 
   @Post()
-  @HasRole('ADMIN')
   async addTemplate(
     @Body() emailTemplateDto: EmailTemplateNewDto,
   ): Promise<void> {
@@ -82,7 +78,6 @@ export class TemplatesController {
   }
 
   @Patch(':templateId')
-  @HasRole('ADMIN')
   @ApiOkResponse({ description: 'Template has been updated' })
   @ApiNotFoundResponse({ description: 'Template does not exist' })
   async updateTemplateName(
@@ -98,7 +93,6 @@ export class TemplatesController {
   }
 
   @Patch(':templateId/locale')
-  @HasRole('ADMIN')
   @ApiCreatedResponse({ description: 'Template locale has been set' })
   async setTemplateLocale(
     @Param('templateId', ParseIntPipe) templateId: number,
@@ -117,7 +111,6 @@ export class TemplatesController {
   }
 
   @Delete(':templateId')
-  @HasRole('ADMIN')
   @ApiCreatedResponse({ description: 'Template has been deleted' })
   async deleteTemplate(
     @Param('templateId', ParseIntPipe) templateId: number,
@@ -132,7 +125,6 @@ export class TemplatesController {
   }
 
   @Delete(':templateId/:locale')
-  @HasRole('ADMIN')
   @ApiCreatedResponse({ description: 'Template locale has been updated' })
   async deleteTemplateLocale(
     @Param('templateId', ParseIntPipe) templateId: number,
