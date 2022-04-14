@@ -14,6 +14,7 @@ import {
 import {
   ApiCreatedResponse,
   ApiNotFoundResponse,
+  ApiOperation,
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
@@ -42,6 +43,7 @@ export class TemplatesController {
   })
   @ApiQuery({ name: 'limit', required: false })
   @ApiQuery({ name: 'page', required: false })
+  @ApiOperation({ operationId: 'getAllTemplates' })
   async getAllTemplates(
     @Query('limit', new ParseIntPipeOrDefault({ def: 10 })) limit: number,
     @Query('page', new ParseIntPipeOrDefault({ def: 0 })) page: number,
@@ -60,6 +62,7 @@ export class TemplatesController {
   @Get(':templateId')
   @ApiOkResponse({ type: EmailTemplateDto })
   @ApiNotFoundResponse({ description: 'Template does not exist' })
+  @ApiOperation({ operationId: 'getTemplateById' })
   async findOneById(
     @Param('templateId', ParseIntPipe) templateId: number,
   ): Promise<EmailTemplateDto> {
@@ -71,6 +74,7 @@ export class TemplatesController {
   }
 
   @Post()
+  @ApiOperation({ operationId: 'addTemplate' })
   async addTemplate(
     @Body() emailTemplateDto: EmailTemplateNewDto,
   ): Promise<void> {
@@ -80,6 +84,7 @@ export class TemplatesController {
   @Patch(':templateId')
   @ApiOkResponse({ description: 'Template has been updated' })
   @ApiNotFoundResponse({ description: 'Template does not exist' })
+  @ApiOperation({ operationId: 'updateTemplate' })
   async updateTemplateName(
     @Param('templateId', ParseIntPipe) templateId: number,
     @Body() nameDto: NameDto,
@@ -94,6 +99,7 @@ export class TemplatesController {
 
   @Patch(':templateId/locale')
   @ApiCreatedResponse({ description: 'Template locale has been set' })
+  @ApiOperation({ operationId: 'setTemplateLocale' })
   async setTemplateLocale(
     @Param('templateId', ParseIntPipe) templateId: number,
     @Body() templateLocaleDto: EmailTemplateLocaleDto,
@@ -112,6 +118,7 @@ export class TemplatesController {
 
   @Delete(':templateId')
   @ApiCreatedResponse({ description: 'Template has been deleted' })
+  @ApiOperation({ operationId: 'deleteTemplate' })
   async deleteTemplate(
     @Param('templateId', ParseIntPipe) templateId: number,
   ): Promise<void> {
@@ -126,6 +133,7 @@ export class TemplatesController {
 
   @Delete(':templateId/:locale')
   @ApiCreatedResponse({ description: 'Template locale has been updated' })
+  @ApiOperation({ operationId: 'deleteTemplateLocale' })
   async deleteTemplateLocale(
     @Param('templateId', ParseIntPipe) templateId: number,
     @Param('locale', ParseLocalePipe) locale: string,

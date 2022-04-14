@@ -4,10 +4,11 @@ import {
   HealthCheckService,
   TypeOrmHealthIndicator,
 } from '@nestjs/terminus';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiExcludeController, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('health')
 @Controller('health')
+@ApiExcludeController()
 export class HealthController {
   constructor(
     private health: HealthCheckService,
